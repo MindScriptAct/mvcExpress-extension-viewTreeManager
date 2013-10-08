@@ -11,8 +11,8 @@ import com.mindscriptact.viewStackTest.view.test3.Test3;
 import com.mindscriptact.viewStackTest.view.test3.Test3Mediator;
 
 import mvcexpress.extensions.viewTreeManager.ModuleViewTree;
-import mvcexpress.extensions.viewTreeManager.core.ViewTreeManager;
 import mvcexpress.extensions.viewTreeManager.data.ViewDefinition;
+import mvcexpress.extensions.viewTreeManager.data.ViewStackDefinition;
 
 /**
  * TODO:CLASS COMMENT
@@ -31,14 +31,11 @@ public class MainModule extends ModuleViewTree {
 	public function start(main:Main):void {
 
 		//
-		var stageDefinition:ViewDefinition = init(main, MainMediator);
-
+		var rootDefinition:ViewDefinition = initRootDefinition(main, MainMediator);
+		rootDefinition.positionAt(10, 10)
 		//*
-
 		//
-		stageDefinition.positionAt(10, 10)
-
-		stageDefinition.addViews(
+		rootDefinition.addViews(
 				new ViewDefinition(MenuView, MenuViewMediator)
 						.autoAdd()
 				, new ViewDefinition(Test1, Test1Mediator)
@@ -49,6 +46,7 @@ public class MainModule extends ModuleViewTree {
 						.executeParentFunctionOnRemove("HadleTestView1Removed", ["More params..."])
 						.positionAt(10, 10)
 						.sizeAs(100, 200)
+						.autoAdd()
 				, new ViewDefinition(Test2, Test2Mediator)
 						.addOn(Message.ADD_TEST2)
 						.removeOn(Message.ADD_TEST1, Message.ADD_TEST3)
@@ -60,23 +58,19 @@ public class MainModule extends ModuleViewTree {
 						.positionAt("|50", "40|")
 						.sizeAs("100", "200")
 		);
-
-
 		//*/
 
-//
-//		var newStageDefinition:ViewDefinition = ViewTreeExpress.getRootDefinition(main);
 
 		/*
-		 stageDefinition.addViews( //
-		 new ViewDefinition(MenuView, MenuViewMediator).autoAdd(), //
-		 new ViewStackDefinition(
-		 new ViewDefinition(Test1, Test1Mediator).addOn(Message.ADD_TEST1), //
-		 new ViewDefinition(Test2, Test2Mediator).addOn(Message.ADD_TEST2), //
-		 new ViewDefinition(Test3, Test3Mediator).addOn(Message.ADD_TEST3) //
-		 )
-		 );
-		 //*/
+		rootDefinition.addViews( //
+				new ViewDefinition(MenuView, MenuViewMediator).autoAdd(), //
+				new ViewStackDefinition(
+						new ViewDefinition(Test1, Test1Mediator).addOn(Message.ADD_TEST1), //
+						new ViewDefinition(Test2, Test2Mediator).addOn(Message.ADD_TEST2), //
+						new ViewDefinition(Test3, Test3Mediator).addOn(Message.ADD_TEST3) //
+				)
+		);
+		//*/
 
 
 	}
