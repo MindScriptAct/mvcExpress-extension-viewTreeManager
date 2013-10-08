@@ -1,15 +1,12 @@
 // Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
-package mvcexpress.extensions.viewTreeManager {
+package mvcexpress.extensions.viewTreeManager.core {
 import flash.utils.Dictionary;
 
 import mvcexpress.core.CommandMap;
-import mvcexpress.core.ExtensionManager;
 import mvcexpress.core.MediatorMap;
-import mvcexpress.core.namespace.pureLegsCore;
 import mvcexpress.extensions.viewTreeManager.commands.ViewTreeCommand;
 import mvcexpress.extensions.viewTreeManager.data.ViewDefinition;
 import mvcexpress.extensions.viewTreeManager.namespace.viewTreeNs;
-import mvcexpress.modules.ModuleCore;
 
 /**
  * Core Module class, represents single application unit in mvcExpress framework.
@@ -21,52 +18,29 @@ import mvcexpress.modules.ModuleCore;
  *
  * @version scoped.1.0.beta2
  */
-public class ModuleViewTree extends ModuleCore {
+public class ViewTreeManager {
+
+	private var mediatorMap:MediatorMap;
+	private var commandMap:CommandMap;
 
 
-	public function ModuleViewTree(moduleName:String = null, mediatorMapClass:Class = null, proxyMapClass:Class = null, commandMapClass:Class = null, messengerClass:Class = null) {
-
-		CONFIG::debug {
-			use namespace pureLegsCore;
-
-			enableExtension(EXTENSION_VIEWTREE_ID);
-		}
-
-		super(moduleName, mediatorMapClass, proxyMapClass, commandMapClass, messengerClass);
-
+	public function ViewTreeManager(mediatorMap:MediatorMap, commandMap:CommandMap) {
+		this.mediatorMap = mediatorMap;
+		this.commandMap = commandMap;
 	}
-
-
-	//----------------------------------
-	//     ...
-	//----------------------------------
-
-	protected function initRootDefinition(mainObject:Object, mainMediatorClass:Class):ViewDefinition {
-		use namespace viewTreeNs;
-		return ModuleViewTree.init(this, mediatorMap, commandMap, mainObject, mainMediatorClass);
-	}
-
-	//----------------------------------
-	//    Extension checking: INTERNAL, DEBUG ONLY.
-	//----------------------------------
-
-	CONFIG::debug
-	static pureLegsCore const EXTENSION_VIEWTREE_ID:int = ExtensionManager.getExtensionIdByName(pureLegsCore::EXTENSION_VIEWTREE_NAME);
-
-	CONFIG::debug
-	static pureLegsCore const EXTENSION_VIEWTREE_NAME:String = "viewTree";
-
 
 	//----------------------------------
 	//		STATIC viewTree internals
 	//----------------------------------
 
 	private static var viewTreeRegistryroot:Dictionary = new Dictionary();
-	private static var viewTrees:Vector.<ModuleViewTree> = new Vector.<ModuleViewTree>();
+	private static var viewTrees:Vector.<ViewTreeManager> = new Vector.<ViewTreeManager>();
 
-	viewTreeNs static function init(module:ModuleViewTree, mediatorMap:MediatorMap, commandMap:CommandMap, root:Object, rootMediatorClass:Class):ViewDefinition {
+	public static function initRootDefinition(mediatorMap:MediatorMap, commandMap:CommandMap, root:Object, rootMediatorClass:Class):ViewDefinition {
 
 		if (!viewTreeRegistryroot[root]) {
+
+			var module:ViewTreeManager = new ViewTreeManager(mediatorMap, commandMap);
 
 			viewTreeRegistryroot[root] = module;
 
@@ -83,7 +57,7 @@ public class ModuleViewTree extends ModuleCore {
 
 	viewTreeNs static function getRootDefinition(root:Object):ViewDefinition {
 		var retVal:ViewDefinition;
-		var viewTreeManager:ModuleViewTree = viewTreeRegistryroot[root];
+		var viewTreeManager:ViewTreeManager = viewTreeRegistryroot[root];
 
 		if (viewTreeManager) {
 			retVal = viewTreeManager.getRootDefinition();
@@ -98,7 +72,7 @@ public class ModuleViewTree extends ModuleCore {
 		var viewTreeCount:int = viewTrees.length;
 
 		for (var i:int = 0; i < viewTreeCount; i++) {
-			var viewTree:ModuleViewTree = viewTrees[i];
+			var viewTree:ViewTreeManager = viewTrees[i];
 			viewTree.trigerRemoveMessage(messageType);
 			viewTree.trigerAddMessage(messageType);
 		}

@@ -6,7 +6,7 @@
  * To change this template use File | Settings | File Templates.
  */
 package mvcexpress.extensions.viewTreeManager.data {
-import mvcexpress.extensions.viewTreeManager.ModuleViewTree;
+import mvcexpress.extensions.viewTreeManager.core.ViewTreeManager;
 import mvcexpress.extensions.viewTreeManager.namespace.viewTreeNs;
 
 use namespace viewTreeNs;
@@ -21,7 +21,7 @@ public class ViewDefinition {
 	// TODO : internal...
 	viewTreeNs var childViews:Vector.<ViewDefinition> = new Vector.<ViewDefinition>();
 
-	viewTreeNs var viewTreeManager:ModuleViewTree;
+	viewTreeNs var viewTreeManager:ViewTreeManager;
 	viewTreeNs var isMapped:Boolean = false;
 	viewTreeNs var parent:ViewDefinition;
 	//

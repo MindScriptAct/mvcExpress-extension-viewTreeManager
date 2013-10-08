@@ -10,15 +10,15 @@ import com.mindscriptact.viewStackTest.view.test2.Test2Mediator;
 import com.mindscriptact.viewStackTest.view.test3.Test3;
 import com.mindscriptact.viewStackTest.view.test3.Test3Mediator;
 
-import mvcexpress.extensions.viewTreeManager.ModuleViewTree;
+import mvcexpress.extensions.viewTreeManager.core.ViewTreeManager;
 import mvcexpress.extensions.viewTreeManager.data.ViewDefinition;
-import mvcexpress.extensions.viewTreeManager.data.ViewStackDefinition;
+import mvcexpress.modules.ModuleCore;
 
 /**
  * TODO:CLASS COMMENT
  * @author rbanevicius
  */
-public class MainModule extends ModuleViewTree {
+public class MainModule extends ModuleCore {
 
 	public function MainModule() {
 		super("MainModule");
@@ -31,7 +31,7 @@ public class MainModule extends ModuleViewTree {
 	public function start(main:Main):void {
 
 		//
-		var rootDefinition:ViewDefinition = initRootDefinition(main, MainMediator);
+		var rootDefinition:ViewDefinition = ViewTreeManager.initRootDefinition(mediatorMap, commandMap, main, MainMediator);
 		rootDefinition.positionAt(10, 10)
 		//*
 		//
@@ -62,15 +62,15 @@ public class MainModule extends ModuleViewTree {
 
 
 		/*
-		rootDefinition.addViews( //
-				new ViewDefinition(MenuView, MenuViewMediator).autoAdd(), //
-				new ViewStackDefinition(
-						new ViewDefinition(Test1, Test1Mediator).addOn(Message.ADD_TEST1), //
-						new ViewDefinition(Test2, Test2Mediator).addOn(Message.ADD_TEST2), //
-						new ViewDefinition(Test3, Test3Mediator).addOn(Message.ADD_TEST3) //
-				)
-		);
-		//*/
+		 rootDefinition.addViews( //
+		 new ViewDefinition(MenuView, MenuViewMediator).autoAdd(), //
+		 new ViewStackDefinition(
+		 new ViewDefinition(Test1, Test1Mediator).addOn(Message.ADD_TEST1), //
+		 new ViewDefinition(Test2, Test2Mediator).addOn(Message.ADD_TEST2), //
+		 new ViewDefinition(Test3, Test3Mediator).addOn(Message.ADD_TEST3) //
+		 )
+		 );
+		 //*/
 
 
 	}
