@@ -1,6 +1,5 @@
 package com.mindscriptact.viewStackTest {
 import com.mindscriptact.viewStackTest.messages.Message;
-import com.mindscriptact.viewStackTest.model.TestProxy;
 import com.mindscriptact.viewStackTest.view.main.MainMediator;
 import com.mindscriptact.viewStackTest.view.menu.MenuView;
 import com.mindscriptact.viewStackTest.view.menu.MenuViewMediator;
@@ -11,18 +10,15 @@ import com.mindscriptact.viewStackTest.view.test2.Test2Mediator;
 import com.mindscriptact.viewStackTest.view.test3.Test3;
 import com.mindscriptact.viewStackTest.view.test3.Test3Mediator;
 
-import org.mvcexpress.extensions.viewTree.ViewTreeExpress;
-import org.mvcexpress.extensions.viewTree.data.ViewDefinition;
-import org.mvcexpress.extensions.viewTree.data.ViewDefinition;
-import org.mvcexpress.extensions.viewTree.data.ViewStackDefinition;
-import org.mvcexpress.modules.ModuleCore;
-import org.mvcexpress.mvc.Proxy;
+import mvcexpress.extensions.viewTreeManager.ModuleViewTree;
+import mvcexpress.extensions.viewTreeManager.ViewTreeExpress;
+import mvcexpress.extensions.viewTreeManager.data.ViewDefinition;
 
 /**
  * TODO:CLASS COMMENT
  * @author rbanevicius
  */
-public class MainModule extends ModuleCore {
+public class MainModule extends ModuleViewTree {
 
 	public function MainModule() {
 		super("MainModule");
@@ -44,7 +40,6 @@ public class MainModule extends ModuleCore {
 		stageDefinition.addViews(
 				new ViewDefinition(MenuView, MenuViewMediator)
 						.autoAdd()
-
 				, new ViewDefinition(Test1, Test1Mediator)
 						.addOn(Message.ADD_TEST1)
 						.removeOn(Message.ADD_TEST2, Message.ADD_TEST3)

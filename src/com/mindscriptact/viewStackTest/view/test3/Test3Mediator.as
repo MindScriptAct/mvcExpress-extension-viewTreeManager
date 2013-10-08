@@ -1,5 +1,5 @@
 package com.mindscriptact.viewStackTest.view.test3 {
-import org.mvcexpress.mvc.Mediator;
+import mvcexpress.mvc.Mediator;
 
 /**
  * TODO:CLASS COMMENT
@@ -10,11 +10,11 @@ public class Test3Mediator extends Mediator {
     [Inject]
     public var view:Test3;
 
-    override public function onRegister():void {
+    override protected function onRegister():void {
 
     }
 
-    override public function onRemove():void {
+    override protected function onRemove():void {
 
     }
 }

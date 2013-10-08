@@ -3,7 +3,7 @@ import com.mindscriptact.viewStackTest.messages.Message;
 
 import flash.events.MouseEvent;
 
-import org.mvcexpress.mvc.Mediator;
+import mvcexpress.mvc.Mediator;
 
 /**
  * TODO:CLASS COMMENT
@@ -14,7 +14,7 @@ public class MenuViewMediator extends Mediator {
     [Inject]
     public var view:MenuView;
 
-    override public function onRegister():void {
+    override protected function onRegister():void {
         view.test1.addEventListener(MouseEvent.CLICK, handleTest1)
         view.test2.addEventListener(MouseEvent.CLICK, handleTest2)
         view.test3.addEventListener(MouseEvent.CLICK, handleTest3)
@@ -32,7 +32,7 @@ public class MenuViewMediator extends Mediator {
         sendMessage(Message.ADD_TEST3)
     }
 
-    override public function onRemove():void {
+    override protected function onRemove():void {
 
     }
 }
