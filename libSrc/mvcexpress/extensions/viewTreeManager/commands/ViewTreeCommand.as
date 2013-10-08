@@ -1,6 +1,6 @@
 package mvcexpress.extensions.viewTreeManager.commands {
 import mvcexpress.core.namespace.pureLegsCore;
-import mvcexpress.extensions.viewTreeManager.ViewTreeExpress;
+import mvcexpress.extensions.viewTreeManager.core.ViewTreeManager;
 import mvcexpress.extensions.viewTreeManager.namespace.viewTreeNs;
 import mvcexpress.mvc.PooledCommand;
 
@@ -14,7 +14,7 @@ public class ViewTreeCommand extends PooledCommand {
 		use namespace pureLegsCore;
 		use namespace viewTreeNs;
 
-		ViewTreeExpress.trigerMessage(messageType);
+		ViewTreeManager.trigerMessage(messageType);
 	}
 
 }

@@ -2,6 +2,9 @@
 package mvcexpress.extensions.viewTreeManager {
 import mvcexpress.core.ExtensionManager;
 import mvcexpress.core.namespace.pureLegsCore;
+import mvcexpress.extensions.viewTreeManager.core.ViewTreeManager;
+import mvcexpress.extensions.viewTreeManager.data.ViewDefinition;
+import mvcexpress.extensions.viewTreeManager.namespace.viewTreeNs;
 import mvcexpress.modules.ModuleCore;
 
 /**
@@ -21,6 +24,7 @@ public class ModuleViewTree extends ModuleCore {
 
 		CONFIG::debug {
 			use namespace pureLegsCore;
+
 			enableExtension(EXTENSION_VIEWTREE_ID);
 		}
 
@@ -33,6 +37,10 @@ public class ModuleViewTree extends ModuleCore {
 	//     ...
 	//----------------------------------
 
+	protected function init(mainObject:Object, mainMediatorClass:Class):ViewDefinition {
+		use namespace viewTreeNs;
+		return ViewTreeManager.init(mediatorMap, commandMap, mainObject, mainMediatorClass);
+	}
 
 	//----------------------------------
 	//    Extension checking: INTERNAL, DEBUG ONLY.

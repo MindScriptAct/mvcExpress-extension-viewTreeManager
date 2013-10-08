@@ -11,7 +11,7 @@ import com.mindscriptact.viewStackTest.view.test3.Test3;
 import com.mindscriptact.viewStackTest.view.test3.Test3Mediator;
 
 import mvcexpress.extensions.viewTreeManager.ModuleViewTree;
-import mvcexpress.extensions.viewTreeManager.ViewTreeExpress;
+import mvcexpress.extensions.viewTreeManager.core.ViewTreeManager;
 import mvcexpress.extensions.viewTreeManager.data.ViewDefinition;
 
 /**
@@ -30,7 +30,8 @@ public class MainModule extends ModuleViewTree {
 
 	public function start(main:Main):void {
 
-		var stageDefinition:ViewDefinition = ViewTreeExpress.init(mediatorMap, commandMap, main, MainMediator);
+		//
+		var stageDefinition:ViewDefinition = init(main, MainMediator);
 
 		//*
 

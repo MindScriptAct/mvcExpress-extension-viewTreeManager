@@ -5,7 +5,7 @@
  * Time: 5:56 PM
  * To change this template use File | Settings | File Templates.
  */
-package mvcexpress.extensions.viewTreeManager {
+package mvcexpress.extensions.viewTreeManager.core {
 import flash.utils.Dictionary;
 
 import mvcexpress.core.CommandMap;
@@ -14,15 +14,17 @@ import mvcexpress.extensions.viewTreeManager.commands.ViewTreeCommand;
 import mvcexpress.extensions.viewTreeManager.data.ViewDefinition;
 import mvcexpress.extensions.viewTreeManager.namespace.viewTreeNs;
 
-public class ViewTreeExpress {
+public class ViewTreeManager {
+
+	///// STATIC..
 
 	private static var viewTreeRegistryroot:Dictionary = new Dictionary();
-	private static var viewTrees:Vector.<ViewTreeExpress> = new Vector.<ViewTreeExpress>();
+	private static var viewTrees:Vector.<ViewTreeManager> = new Vector.<ViewTreeManager>();
 
-	public static function init(mediatorMap:MediatorMap, commandMap:CommandMap, root:Object, rootMediatorClass:Class):ViewDefinition {
+	viewTreeNs static function init(mediatorMap:MediatorMap, commandMap:CommandMap, root:Object, rootMediatorClass:Class):ViewDefinition {
 
 		if (!viewTreeRegistryroot[root]) {
-			var viewTreeManager:ViewTreeExpress = new ViewTreeExpress(mediatorMap, commandMap);
+			var viewTreeManager:ViewTreeManager = new ViewTreeManager(mediatorMap, commandMap);
 
 			viewTreeRegistryroot[root] = viewTreeManager;
 
@@ -37,9 +39,9 @@ public class ViewTreeExpress {
 		}
 	}
 
-	public static function getRootDefinition(root:Object):ViewDefinition {
+	viewTreeNs static function getRootDefinition(root:Object):ViewDefinition {
 		var retVal:ViewDefinition;
-		var viewTreeManager:ViewTreeExpress = viewTreeRegistryroot[root];
+		var viewTreeManager:ViewTreeManager = viewTreeRegistryroot[root];
 
 		if (viewTreeManager) {
 			retVal = viewTreeManager.getRootDefinition();
@@ -54,7 +56,7 @@ public class ViewTreeExpress {
 		var viewTreeCount:int = viewTrees.length;
 
 		for (var i:int = 0; i < viewTreeCount; i++) {
-			var viewTree:ViewTreeExpress = viewTrees[i];
+			var viewTree:ViewTreeManager = viewTrees[i];
 			viewTree.trigerRemoveMessage(messageType);
 			viewTree.trigerAddMessage(messageType);
 		}
@@ -71,7 +73,7 @@ public class ViewTreeExpress {
 	private var commandMap:CommandMap;
 	private var rootDefinition:ViewDefinition;
 
-	public function ViewTreeExpress(mediatorMap:MediatorMap, commandMap:CommandMap) {
+	public function ViewTreeManager(mediatorMap:MediatorMap, commandMap:CommandMap) {
 		this.mediatorMap = mediatorMap;
 		this.commandMap = commandMap;
 	}
