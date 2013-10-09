@@ -7,7 +7,7 @@
           <sdk name="flex_sdk_4.10.0" />
         </dependencies>
         <compiler-options>
-          <option name="additionalOptions" value="-define=CONFIG::debug,true" />
+          <option name="additionalOptions" value="-define=CONFIG::debug,true -default-size 1000 500" />
         </compiler-options>
         <packaging-air-desktop />
         <packaging-android />

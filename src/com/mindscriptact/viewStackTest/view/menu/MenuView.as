@@ -16,9 +16,9 @@ public class MenuView extends Sprite {
 	public var test3:PushButton;
 
 	public function MenuView() {
-		test1 = new PushButton(this, 50, 50, "Test1");
-		test2 = new PushButton(this, 150, 50, "Test2");
-		test3 = new PushButton(this, 250, 50, "Test3");
+		test1 = new PushButton(this, 0, 0, "Test1");
+		test2 = new PushButton(this, 100, 0, "Test2");
+		test3 = new PushButton(this, 200, 0, "Test3");
 	}
 }
 }

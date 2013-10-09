@@ -61,7 +61,9 @@ public class ViewNode {
 		// check if mediator is mapped.
 		if (!viewDefinition.isMapped) {
 			viewDefinition.isMapped = true;
-			moduleMediatorMap.map(viewDefinition.viewClass, viewDefinition.mediatorClass);
+			if (!moduleMediatorMap.isMapped(viewDefinition.viewClass, viewDefinition.mediatorClass)) {
+				moduleMediatorMap.map(viewDefinition.viewClass, viewDefinition.mediatorClass);
+			}
 		}
 		// check if parent is created.
 		var parent:ViewDefinition = viewDefinition.parent;
@@ -69,9 +71,96 @@ public class ViewNode {
 			var parentView:Object = viewRegistry[parent];
 			if (parentView) { // check if parent view is added.
 				if (!viewDefinition.view) { // check if object already created..
-					// TODO : view params...
-					var view:Object = new viewDefinition.viewClass();
+					var viewParams:Array = viewDefinition.viewParams;
+					var view:Object;
+					if (viewParams != null) {
+						switch (viewParams.length) {
+							case 0:
+								view = new viewDefinition.viewClass();
+								break;
+							case 1:
+								view = new viewDefinition.viewClass(viewParams[0]);
+								break;
+							case 2:
+								view = new viewDefinition.viewClass(viewParams[0], viewParams[1]);
+								break;
+							case 3:
+								view = new viewDefinition.viewClass(viewParams[0], viewParams[1], viewParams[2]);
+								break;
+							case 4:
+								view = new viewDefinition.viewClass(viewParams[0], viewParams[1], viewParams[2], viewParams[3]);
+								break;
+							case 5:
+								view = new viewDefinition.viewClass(viewParams[0], viewParams[1], viewParams[2], viewParams[3], viewParams[4]);
+								break;
+							case 6:
+								view = new viewDefinition.viewClass(viewParams[0], viewParams[1], viewParams[2], viewParams[3], viewParams[4], viewParams[5]);
+								break;
+							case 7:
+								view = new viewDefinition.viewClass(viewParams[0], viewParams[1], viewParams[2], viewParams[3], viewParams[4], viewParams[5], viewParams[6]);
+								break;
+							case 8:
+								view = new viewDefinition.viewClass(viewParams[0], viewParams[1], viewParams[2], viewParams[3], viewParams[4], viewParams[5], viewParams[6], viewParams[7]);
+								break;
+							case 9:
+								view = new viewDefinition.viewClass(viewParams[0], viewParams[1], viewParams[2], viewParams[3], viewParams[4], viewParams[5], viewParams[6], viewParams[7], viewParams[8]);
+								break;
+							case 10:
+								view = new viewDefinition.viewClass(viewParams[0], viewParams[1], viewParams[2], viewParams[3], viewParams[4], viewParams[5], viewParams[6], viewParams[7], viewParams[8], viewParams[9]);
+								break;
+							default:
+								throw Error("Too many view parameters, only 10 are suported.");
+								break;
+						}
+					} else {
+						view = new viewDefinition.viewClass();
+					}
 					viewDefinition.view = view;
+					//
+					/// positioning
+					if (viewDefinition.xPositionType > 0) {
+						switch (viewDefinition.xPositionType) {
+							case ViewDefinition.STATIC:
+								view.x = viewDefinition.posX;
+								break;
+							case ViewDefinition.PERCENTAGE:
+								view.x = viewDefinition.parent.sizeWidth  * (viewDefinition.posX / 100) - viewDefinition.sizeWidth / 2;
+								break;
+							case ViewDefinition.CENTERED:
+								view.x = viewDefinition.parent.sizeWidth / 2 - viewDefinition.sizeWidth / 2 + viewDefinition.posX;
+								break;
+							case ViewDefinition.START:
+								view.x = viewDefinition.posX;
+								break;
+							case ViewDefinition.END:
+								view.x = viewDefinition.parent.sizeWidth - viewDefinition.posX - viewDefinition.sizeWidth;
+								break;
+						}
+					}
+					if (viewDefinition.yPositionType > 0) {
+						switch (viewDefinition.yPositionType) {
+							case ViewDefinition.STATIC:
+								view.y = viewDefinition.posY;
+								break;
+							case ViewDefinition.PERCENTAGE:
+								view.y = viewDefinition.parent.sizeHeight  * (viewDefinition.posY / 100) - viewDefinition.sizeWidth / 2;
+								break;
+							case ViewDefinition.CENTERED:
+								view.y = viewDefinition.parent.sizeHeight / 2 - viewDefinition.sizeWidth / 2 + viewDefinition.posY;
+								break;
+							case ViewDefinition.START:
+								view.y = viewDefinition.posY;
+								break;
+							case ViewDefinition.END:
+								view.y = viewDefinition.parent.sizeHeight - viewDefinition.posY - viewDefinition.sizeHeight;
+								break;
+						}
+					}
+					// sizing
+					if (viewDefinition.isSized) {
+						view.width = viewDefinition.sizeWidth;
+						view.height = viewDefinition.sizeHeight;
+					}
 					//
 					parentView[viewDefinition.addFunction](view);
 					//

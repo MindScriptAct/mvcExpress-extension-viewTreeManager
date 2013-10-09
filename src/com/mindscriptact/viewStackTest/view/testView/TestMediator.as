@@ -1,14 +1,16 @@
-package com.mindscriptact.viewStackTest.view.test1 {
+package com.mindscriptact.viewStackTest.view.testView {
+import com.mindscriptact.viewStackTest.view.testView.TestView;
+
 import mvcexpress.mvc.Mediator;
 
 /**
  * TODO:CLASS COMMENT
  * @author rbanevicius
  */
-public class Test1Mediator extends Mediator {
+public class TestMediator extends Mediator {
 
 	[Inject]
-	public var view:Test1;
+	public var view:TestView;
 
 	override protected function onRegister():void {
 

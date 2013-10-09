@@ -1,5 +1,5 @@
 package com.mindscriptact.viewStackTest.model {
-import org.mvcexpress.mvc.Proxy;
+import mvcexpress.mvc.Proxy;
 
 /**
  * TODO:CLASS COMMENT

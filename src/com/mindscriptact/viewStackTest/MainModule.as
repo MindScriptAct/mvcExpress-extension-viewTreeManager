@@ -3,12 +3,8 @@ import com.mindscriptact.viewStackTest.messages.Message;
 import com.mindscriptact.viewStackTest.view.main.MainMediator;
 import com.mindscriptact.viewStackTest.view.menu.MenuView;
 import com.mindscriptact.viewStackTest.view.menu.MenuViewMediator;
-import com.mindscriptact.viewStackTest.view.test1.Test1;
-import com.mindscriptact.viewStackTest.view.test1.Test1Mediator;
-import com.mindscriptact.viewStackTest.view.test2.Test2;
-import com.mindscriptact.viewStackTest.view.test2.Test2Mediator;
-import com.mindscriptact.viewStackTest.view.test3.Test3;
-import com.mindscriptact.viewStackTest.view.test3.Test3Mediator;
+import com.mindscriptact.viewStackTest.view.testView.TestMediator;
+import com.mindscriptact.viewStackTest.view.testView.TestView;
 
 import mvcexpress.extensions.viewTreeManager.core.ViewTreeManager;
 import mvcexpress.extensions.viewTreeManager.data.ViewDefinition;
@@ -30,33 +26,41 @@ public class MainModule extends ModuleCore {
 
 	public function start(main:Main):void {
 
+		var testView:TestView = new TestView("Stage");
+		main.addChild(testView);
+		testView.width = 1000;
+		testView.height = 500;
+		testView.alpha = 0.3;
+
 		//
 		var rootDefinition:ViewDefinition = ViewTreeManager.initRootDefinition(mediatorMap, commandMap, main, MainMediator);
-		rootDefinition.positionAt(10, 10)
+		rootDefinition.positionAt(10, 10);
+		rootDefinition.sizeAs(1000, 500);
 		//*
 		//
 		rootDefinition.addViews(
 				new ViewDefinition(MenuView, MenuViewMediator)
 						.autoAdd()
-				, new ViewDefinition(Test1, Test1Mediator)
+						.positionAt(10, 470)
+				, new ViewDefinition(TestView, TestMediator, ["Test 1"])
 						.addOn(Message.ADD_TEST1)
 						.removeOn(Message.ADD_TEST2, Message.ADD_TEST3)
 						.injectIntoParentAs("testView")
 						.executeParentFunctionOnAdd("handleTestView1Added", ["params...", 1])
 						.executeParentFunctionOnRemove("HadleTestView1Removed", ["More params..."])
-						.positionAt(10, 10)
+						.positionAt(50, 50)
 						.sizeAs(100, 200)
 						.autoAdd()
-				, new ViewDefinition(Test2, Test2Mediator)
+				, new ViewDefinition(TestView, TestMediator, ["Test 2"])
 						.addOn(Message.ADD_TEST2)
 						.removeOn(Message.ADD_TEST1, Message.ADD_TEST3)
 						.positionAt("^20", "20^")
-						.sizeAs("30%", "50%")
-				, new ViewDefinition(Test3, Test3Mediator)
+						.sizeAs("50", "50")
+				, new ViewDefinition(TestView, TestMediator, ["Test 3"])
 						.addOn(Message.ADD_TEST3)
 						.removeOn(Message.ADD_TEST1, Message.ADD_TEST2)
-						.positionAt("|50", "40|")
-						.sizeAs("100", "200")
+						.positionAt("|100", "100|")
+						.sizeAs("100", "100")
 		);
 		//*/
 
