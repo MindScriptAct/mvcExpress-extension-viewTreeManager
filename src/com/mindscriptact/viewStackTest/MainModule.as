@@ -54,12 +54,12 @@ public class MainModule extends ModuleCore {
 				, new ViewDefinition(TestView, TestMediator, ["Test 2"])
 						.addOn(Message.ADD_TEST2)
 						.removeOn(Message.ADD_TEST1, Message.ADD_TEST3)
-						.positionAt("^20", "20^")
-						.sizeAs("50", "50")
+						.positionAt("|0", "0|")
+						.sizeAs("50%", "50%")
 				, new ViewDefinition(TestView, TestMediator, ["Test 3"])
 						.addOn(Message.ADD_TEST3)
 						.removeOn(Message.ADD_TEST1, Message.ADD_TEST2)
-						.positionAt("|100", "100|")
+						.positionAt("^20", "20^")
 						.sizeAs("100", "100")
 		);
 		//*/

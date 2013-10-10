@@ -116,7 +116,19 @@ public class ViewNode {
 						view = new viewDefinition.viewClass();
 					}
 					viewDefinition.view = view;
-					//
+
+					// sizing
+					if (viewDefinition.widthSizingType == ViewDefinition.STATIC) {
+						view.width = viewDefinition.sizeWidth;
+					} else if (viewDefinition.widthSizingType == ViewDefinition.PERCENTAGE) {
+						view.width = viewDefinition.parent.sizeWidth * (viewDefinition._sizeWidth / 100);
+					}
+					if (viewDefinition.widthSizingType == ViewDefinition.STATIC) {
+						view.height = viewDefinition.sizeHeight;
+					} else if (viewDefinition.widthSizingType == ViewDefinition.PERCENTAGE) {
+						view.height = viewDefinition.parent.sizeHeight * (viewDefinition._sizeHeight / 100);
+					}
+
 					/// positioning
 					if (viewDefinition.xPositionType > 0) {
 						switch (viewDefinition.xPositionType) {
@@ -124,7 +136,7 @@ public class ViewNode {
 								view.x = viewDefinition.posX;
 								break;
 							case ViewDefinition.PERCENTAGE:
-								view.x = viewDefinition.parent.sizeWidth  * (viewDefinition.posX / 100) - viewDefinition.sizeWidth / 2;
+								view.x = viewDefinition.parent.sizeWidth * (viewDefinition.posX / 100) - viewDefinition.sizeWidth / 2;
 								break;
 							case ViewDefinition.CENTERED:
 								view.x = viewDefinition.parent.sizeWidth / 2 - viewDefinition.sizeWidth / 2 + viewDefinition.posX;
@@ -143,10 +155,10 @@ public class ViewNode {
 								view.y = viewDefinition.posY;
 								break;
 							case ViewDefinition.PERCENTAGE:
-								view.y = viewDefinition.parent.sizeHeight  * (viewDefinition.posY / 100) - viewDefinition.sizeWidth / 2;
+								view.y = viewDefinition.parent.sizeHeight * (viewDefinition.posY / 100) - viewDefinition.sizeHeight / 2;
 								break;
 							case ViewDefinition.CENTERED:
-								view.y = viewDefinition.parent.sizeHeight / 2 - viewDefinition.sizeWidth / 2 + viewDefinition.posY;
+								view.y = viewDefinition.parent.sizeHeight / 2 - viewDefinition.sizeHeight / 2 + viewDefinition.posY;
 								break;
 							case ViewDefinition.START:
 								view.y = viewDefinition.posY;
@@ -156,11 +168,7 @@ public class ViewNode {
 								break;
 						}
 					}
-					// sizing
-					if (viewDefinition.isSized) {
-						view.width = viewDefinition.sizeWidth;
-						view.height = viewDefinition.sizeHeight;
-					}
+
 					//
 					parentView[viewDefinition.addFunction](view);
 					//

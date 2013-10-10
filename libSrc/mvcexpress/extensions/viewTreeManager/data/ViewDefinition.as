@@ -55,9 +55,10 @@ public class ViewDefinition {
 	viewTreeNs var posY:Number;
 	//viewTreeNs var posZ:Number;
 
-	viewTreeNs var isSized:Boolean = false;
-	private var _sizeWidth:Number;
-	private var _sizeHeight:Number;
+	viewTreeNs var widthSizingType:int = 0;
+	viewTreeNs var heightSizingType:int = 0;
+	viewTreeNs var _sizeWidth:Number;
+	viewTreeNs var _sizeHeight:Number;
 	///viewTreeNs var sizeDepth:Number;
 
 	public function ViewDefinition(viewClass:Class, mediatorClass:Class, viewParams:Array = null) {
@@ -201,8 +202,7 @@ public class ViewDefinition {
 		var strLength:int;
 		var lastChar:String;
 
-		isSized = true;
-
+		widthSizingType = STATIC;
 		if (width is Number) {
 			_sizeWidth = Number(width);
 		} else if (width is String) {
@@ -210,15 +210,18 @@ public class ViewDefinition {
 			if (strLength > 0) {
 				lastChar = width.charAt(strLength - 1);
 				if (lastChar == "%") {
-					// TODO : implement..
-					//_sizeWidth = parent.sizeWidth * Number(width.substr(0, strLength - 1)) / 100;
+					widthSizingType = PERCENTAGE;
+					_sizeWidth = Number(width.substr(0, strLength - 1))
 				} else {
 					_sizeWidth = Number(width);
 				}
 			} else {
 				_sizeWidth = view.width;
 			}
+		} else {
+			heightSizingType = NONE;
 		}
+		heightSizingType = STATIC;
 		if (height is Number) {
 			_sizeHeight = Number(height);
 		} else if (height is String) {
@@ -226,14 +229,16 @@ public class ViewDefinition {
 			if (strLength > 0) {
 				lastChar = height.charAt(strLength - 1);
 				if (lastChar == "%") {
-					// TODO : implement..
-					//_sizeHeight = parent._sizeHeight * Number(height.substr(0, strLength - 1)) / 100;
+					heightSizingType = PERCENTAGE;
+					_sizeHeight = Number(height.substr(0, strLength - 1));
 				} else {
 					_sizeHeight = Number(height);
 				}
 			} else {
 				_sizeHeight = view.height;
 			}
+		} else {
+			heightSizingType = NONE;
 		}
 
 		//sizeDepth = depth;
@@ -241,16 +246,20 @@ public class ViewDefinition {
 	}
 
 	public function get sizeWidth():Number {
-		if (isSized) {
+		if (widthSizingType == STATIC) {
 			return _sizeWidth;
+		} else if (widthSizingType == PERCENTAGE && view.parent) {
+			return parent.sizeWidth * (_sizeWidth / 100);
 		} else {
 			return view.width;
 		}
 	}
 
 	public function get sizeHeight():Number {
-		if (isSized) {
+		if (heightSizingType == STATIC) {
 			return _sizeHeight;
+		} else if (heightSizingType == PERCENTAGE && view.parent) {
+			return parent.sizeHeight * (_sizeHeight / 100);
 		} else {
 			return view.height;
 		}
