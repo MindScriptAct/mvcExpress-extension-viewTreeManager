@@ -41,7 +41,7 @@ public class MainModule extends ModuleCore {
 		rootDefinition.addViews(
 				new ViewDefinition(MenuView, MenuViewMediator)
 						.autoAdd()
-						.positionAt(10, 470)
+						.positionAt(10, "20^")
 				, new ViewDefinition(TestView, TestMediator, ["Test 1"])
 						.addOn(Message.ADD_TEST1)
 						.removeOn(Message.ADD_TEST2, Message.ADD_TEST3)
@@ -70,7 +70,7 @@ public class MainModule extends ModuleCore {
 		rootDefinition.addViews(
 				new ViewDefinition(MenuView, MenuViewMediator)
 						.autoAdd()
-						.positionAt(10, 470)
+						.positionAt(10, "20^")
 				, new ViewDefinition(TestView, TestMediator, ["Test 1"])
 						.removeOn(Message.ADD_TEST1)
 						.toggleOn(Message.ADD_TEST1)

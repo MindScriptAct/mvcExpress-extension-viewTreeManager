@@ -21,6 +21,8 @@ public class ViewNode {
 
 	private var rootDefinition:ViewDefinition;
 
+	private var childDefinition:Dictionary = new Dictionary(); // view object by definition
+
 	public function ViewNode(mediatorMap:MediatorMap, commandMap:CommandMap) {
 		this.moduleMediatorMap = mediatorMap;
 		this.moduleCommandMap = commandMap;
@@ -175,10 +177,29 @@ public class ViewNode {
 					// add
 					if (viewDefinition.useIndexing) {
 						// todo : find layer...
-						parentView[viewDefinition.addIndexedFunction](view, 0);
+						var addIndex:int = -1;
+
+						var nextDefinition:ViewDefinition = viewDefinition.nextSibling;
+						while (nextDefinition) {
+							var nextView:Object = childDefinition[nextDefinition];
+							nextDefinition = nextDefinition.nextSibling;
+							if (nextView != null) {
+								addIndex = parentView[viewDefinition.getIndexFunction](nextView);
+								nextDefinition = null;
+							}
+						}
+
+						if (addIndex > -1) {
+							parentView[viewDefinition.addIndexedFunction](view, addIndex);
+						} else {
+							parentView[viewDefinition.addFunction](view);
+						}
+
 					} else {
 						parentView[viewDefinition.addFunction](view);
 					}
+
+					childDefinition[viewDefinition] = view;
 
 					//
 					moduleMediatorMap.mediate(view);
@@ -225,6 +246,9 @@ public class ViewNode {
 			if (view) {
 				//
 				parentView[viewDefinition.removeFunction](view);
+				//
+				delete childDefinition[viewDefinition];
+				//
 				moduleMediatorMap.unmediate(view);
 				//
 				viewDefinition.view = null;

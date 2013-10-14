@@ -34,10 +34,8 @@ public class ViewDefinition {
 	viewTreeNs var isMapped:Boolean = false;
 	viewTreeNs var parent:ViewDefinition;
 
-	viewTreeNs var layerId:int;
-	viewTreeNs var childLayerCount:int;
 	//
-	viewTreeNs var childTail:ViewDefinition;
+	viewTreeNs var childHead:ViewDefinition;
 	//
 	viewTreeNs var nextSibling:ViewDefinition;
 	//
@@ -46,6 +44,7 @@ public class ViewDefinition {
 
 	viewTreeNs var useIndexing:Boolean = true;
 	viewTreeNs var addIndexedFunction:String = "addChildAt";
+	viewTreeNs var getIndexFunction:String = "getChildIndex";
 	viewTreeNs var addFunction:String = "addChild";
 	viewTreeNs var removeFunction:String = "removeChild";
 	//
@@ -95,14 +94,10 @@ public class ViewDefinition {
 				viewDefinition.parent = this;
 
 				//
-				viewDefinition.layerId = this.childLayerCount;
-				this.childLayerCount++;
-
-				//
-				if (this.childTail) {
-					this.childTail.nextSibling = viewDefinition;
+				if (childHead) {
+					viewDefinition.nextSibling = childHead;
 				}
-				this.childTail = viewDefinition;
+				this.childHead = viewDefinition;
 
 				this.childViews.push(viewDefinition);
 
