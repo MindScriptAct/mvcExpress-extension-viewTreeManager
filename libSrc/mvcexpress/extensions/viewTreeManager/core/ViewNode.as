@@ -172,8 +172,14 @@ public class ViewNode {
 						}
 					}
 
-					//
-					parentView[viewDefinition.addFunction](view);
+					// add
+					if (viewDefinition.useIndexing) {
+						// todo : find layer...
+						parentView[viewDefinition.addIndexedFunction](view, 0);
+					} else {
+						parentView[viewDefinition.addFunction](view);
+					}
+
 					//
 					moduleMediatorMap.mediate(view);
 					viewRegistry[viewDefinition] = view;

@@ -72,18 +72,23 @@ public class MainModule extends ModuleCore {
 						.autoAdd()
 						.positionAt(10, 470)
 				, new ViewDefinition(TestView, TestMediator, ["Test 1"])
+						.removeOn(Message.ADD_TEST1)
 						.toggleOn(Message.ADD_TEST1)
 						.positionAt(100, 100)
 						.sizeAs(200, 200)
 				, new ViewDefinition(TestView, TestMediator, ["Test 2"])
-						.toggleOn(Message.ADD_TEST2)
+						.addOn(Message.ADD_TEST2)
+						.removeOn(Message.ADD_TEST2)
 						.positionAt(170, 170)
 						.sizeAs(200, 200)
 				, new ViewDefinition(TestView, TestMediator, ["Test 3"])
+						.addOn(Message.ADD_TEST3)
 						.toggleOn(Message.ADD_TEST3)
 						.positionAt(240, 240)
 						.sizeAs(200, 200)
 		);
+
+
 		//*/
 
 

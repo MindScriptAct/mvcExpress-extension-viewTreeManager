@@ -33,9 +33,19 @@ public class ViewDefinition {
 	viewTreeNs var viewTreeManager:ViewNode;
 	viewTreeNs var isMapped:Boolean = false;
 	viewTreeNs var parent:ViewDefinition;
+
+	viewTreeNs var layerId:int;
+	viewTreeNs var childLayerCount:int;
+	//
+	viewTreeNs var childTail:ViewDefinition;
+	//
+	viewTreeNs var nextSibling:ViewDefinition;
 	//
 	viewTreeNs var view:Object;
 	//
+
+	viewTreeNs var useIndexing:Boolean = true;
+	viewTreeNs var addIndexedFunction:String = "addChildAt";
 	viewTreeNs var addFunction:String = "addChild";
 	viewTreeNs var removeFunction:String = "removeChild";
 	//
@@ -76,14 +86,26 @@ public class ViewDefinition {
 		}
 	}
 
-	public function addViews(...views:Array):void {
+	public function addViews(...views:Array):ViewDefinition {
 		for (var i:int = 0; i < views.length; i++) {
 			// TODO : check for ViewDefinition ?
 			var viewDefinition:ViewDefinition = views[i] as ViewDefinition;
 			if (viewDefinition) {
 				viewDefinition.viewTreeManager = viewTreeManager;
 				viewDefinition.parent = this;
+
+				//
+				viewDefinition.layerId = this.childLayerCount;
+				this.childLayerCount++;
+
+				//
+				if (this.childTail) {
+					this.childTail.nextSibling = viewDefinition;
+				}
+				this.childTail = viewDefinition;
+
 				this.childViews.push(viewDefinition);
+
 				if (viewDefinition.toggleMessages) {
 					viewTreeManager.initToggleMessages(viewDefinition, viewDefinition.toggleMessages);
 				}
@@ -100,7 +122,7 @@ public class ViewDefinition {
 				throw  Error("You can add only ViewDefinition objects.");
 			}
 		}
-
+		return this;
 	}
 
 	public function autoAdd():ViewDefinition {
@@ -109,56 +131,94 @@ public class ViewDefinition {
 	}
 
 	public function addOn(...addMessages:Array):ViewDefinition {
-		if (this.addMessages == null) {
-			this.addMessages = addMessages;
-		} else {
-			for (var i:int = 0; i < addMessages.length; i++) {
-				var newMessage:String = addMessages[i];
-				var needToAdd:Boolean = true;
-				for (var j:int = 0; j < this.addMessages.length; j++) {
-					if (newMessage == this.addMessages[j]) {
-						needToAdd = false;
-						break;
-					}
+		for (var i:int = 0; i < addMessages.length; i++) {
+			var newMessage:String = addMessages[i];
+			if (this.addMessages) {
+				var messageIndex:int = this.addMessages.indexOf(newMessage);
+				if (messageIndex > -1) {
+					addMessages.splice(messageIndex, 1);
+					i--;
 				}
-				if (needToAdd) {
-					this.addMessages.push(newMessage);
+			}
+			if (this.toggleMessages) {
+				messageIndex = this.toggleMessages.indexOf(newMessage);
+				if (messageIndex > -1) {
+					addMessages.splice(messageIndex, 1);
+					i--;
 				}
+			}
+			if (this.removeMessages) {
+				messageIndex = this.removeMessages.indexOf(newMessage);
+				if (messageIndex > -1) {
+					toggleOn(newMessage);
+					addMessages.splice(messageIndex, 1);
+					i--;
+				}
+			}
+
+			if (this.addMessages == null) {
+				this.addMessages = addMessages;
+			} else {
+				this.addMessages.concat(addMessages);
 			}
 		}
 		return this;
 	}
 
 	public function removeOn(...removeMessages:Array):ViewDefinition {
-		if (this.removeMessages == null) {
-			this.removeMessages = removeMessages;
-		} else {
-			for (var i:int = 0; i < removeMessages.length; i++) {
-				var newMessage:String = removeMessages[i];
-				var needToAdd:Boolean = true;
-				for (var j:int = 0; j < this.removeMessages.length; j++) {
-					if (newMessage == this.removeMessages[j]) {
-						needToAdd = false;
-						break;
-					}
+		for (var i:int = 0; i < removeMessages.length; i++) {
+			var newMessage:String = removeMessages[i];
+			if (this.removeMessages) {
+				var messageIndex:int = this.removeMessages.indexOf(newMessage);
+				if (messageIndex > -1) {
+					removeMessages.splice(messageIndex, 1);
+					i--;
 				}
-				if (needToAdd) {
-					this.removeMessages.push(newMessage);
+			}
+			if (this.toggleMessages) {
+				messageIndex = this.toggleMessages.indexOf(newMessage);
+				if (messageIndex > -1) {
+					removeMessages.splice(messageIndex, 1);
+					i--;
 				}
+			}
+			if (this.addMessages) {
+				messageIndex = this.addMessages.indexOf(newMessage);
+				if (messageIndex > -1) {
+					toggleOn(newMessage);
+					removeMessages.splice(messageIndex, 1);
+					i--;
+				}
+			}
+
+			if (this.removeMessages == null) {
+				this.removeMessages = removeMessages;
+			} else {
+				this.removeMessages.concat(removeMessages);
 			}
 		}
 		return this;
 	}
 
 	public function toggleOn(...toggleMessages:Array):ViewDefinition {
-		if (this.toggleMessages == null) {
-			this.toggleMessages = toggleMessages;
-		} else {
-			for (var i:int = 0; i < toggleMessages.length; i++) {
-				var newMessage:String = toggleMessages[i];
+		for (var i:int = 0; i < toggleMessages.length; i++) {
+			var newMessage:String = toggleMessages[i];
+			if (this.addMessages) {
+				var messageIndex:int = this.addMessages.indexOf(newMessage)
+				if (messageIndex > -1) {
+					this.addMessages.splice(messageIndex, 1);
+				}
+			}
+			if (this.removeMessages) {
+				messageIndex = this.removeMessages.indexOf(newMessage)
+				if (messageIndex > -1) {
+					this.removeMessages.splice(messageIndex, 1);
+				}
+			}
+			if (this.toggleMessages) {
 				var needToAdd:Boolean = true;
 				for (var j:int = 0; j < this.toggleMessages.length; j++) {
-					if (newMessage == this.toggleMessages[j]) {
+					if (this.toggleMessages[j] == newMessage) {
 						needToAdd = false;
 						break;
 					}
@@ -167,6 +227,9 @@ public class ViewDefinition {
 					this.toggleMessages.push(newMessage);
 				}
 			}
+		}
+		if (this.toggleMessages == null) {
+			this.toggleMessages = toggleMessages;
 		}
 		return this;
 	}

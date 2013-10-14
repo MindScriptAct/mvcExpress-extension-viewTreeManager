@@ -27,7 +27,7 @@ public class TestView extends Sprite {
 
 	public function TestView(testName:String) {
 
-		this.addEventListener(Event.ADDED_TO_STAGE, renderText, false, 0, true);
+		this.addEventListener(Event.ADDED_TO_STAGE, handleAddedToStage, false, 0, true);
 		this.addEventListener(Event.ADDED, renderText, false, 0, true);
 		this.addEventListener(Event.CHANGE, renderText, false, 0, true);
 		this.addEventListener(Event.COMPLETE, renderText, false, 0, true);
@@ -131,6 +131,14 @@ public class TestView extends Sprite {
 
 		renderText();
 
+	}
+
+	private function handleAddedToStage(event:Event):void {
+		if (this.parent) {
+			this.parent.addEventListener(Event.ADDED, renderText, false, 0, true);
+			this.parent.addEventListener(Event.REMOVED, renderText, false, 0, true);
+		}
+		renderText();
 	}
 
 	private function renderText(event:Object = null):void {
