@@ -13,6 +13,9 @@ public class ViewNode {
 	private var moduleCommandMap:CommandMap;
 
 	private var viewRegistry:Dictionary = new Dictionary();
+
+
+	private var toggleMessageRegistry:Dictionary = new Dictionary();
 	private var addMessageRegistry:Dictionary = new Dictionary();
 	private var removeMessageRegistry:Dictionary = new Dictionary();
 
@@ -203,6 +206,8 @@ public class ViewNode {
 	}
 
 	viewTreeNs function removeView(viewDefinition:ViewDefinition):void {
+		var retVal:Boolean = false;
+
 		use namespace viewTreeNs;
 
 		// check if parent is created.
@@ -240,7 +245,21 @@ public class ViewNode {
 	//		message handling
 	//----------------------------------
 
-	viewTreeNs function initAddMesages(viewDefinition:ViewDefinition, addMessages:Array):void {
+
+	viewTreeNs function initToggleMessages(viewDefinition:ViewDefinition, toggleMessages:Array):void {
+		for (var i:int = 0; i < toggleMessages.length; i++) {
+			var message:String = toggleMessages[i];
+			if (toggleMessageRegistry[message] == null) {
+				toggleMessageRegistry[message] = new Vector.<ViewDefinition>();
+				if (!moduleCommandMap.isMapped(message, ViewTreeCommand)) {
+					moduleCommandMap.map(message, ViewTreeCommand)
+				}
+			}
+			toggleMessageRegistry[message].push(viewDefinition);
+		}
+	}
+
+	viewTreeNs function initAddMessages(viewDefinition:ViewDefinition, addMessages:Array):void {
 		for (var i:int = 0; i < addMessages.length; i++) {
 			var message:String = addMessages[i];
 			if (addMessageRegistry[message] == null) {
@@ -253,7 +272,7 @@ public class ViewNode {
 		}
 	}
 
-	viewTreeNs function initRemoveMesages(viewDefinition:ViewDefinition, removeMessages:Array):void {
+	viewTreeNs function initRemoveMessages(viewDefinition:ViewDefinition, removeMessages:Array):void {
 		for (var i:int = 0; i < removeMessages.length; i++) {
 			var message:String = removeMessages[i];
 			if (removeMessageRegistry[message] == null) {
@@ -295,6 +314,54 @@ public class ViewNode {
 		}
 	}
 
+
+	viewTreeNs function triggerMessage(messageType:String):void {
+
+		use namespace viewTreeNs;
+
+		var viewDefinitions:Vector.<ViewDefinition>;
+		var viewDefinitionCount:int;
+		var viewDefinition:ViewDefinition;
+		var i:int;
+
+		// toggle check
+		viewDefinitions = toggleMessageRegistry[messageType];
+		if (viewDefinitions) {
+			viewDefinitionCount = viewDefinitions.length;
+			for (i = 0; i < viewDefinitionCount; i++) {
+				viewDefinition = viewDefinitions[i];
+				if (!viewDefinition.view) {
+					addView(viewDefinition);
+				} else {
+					removeView(viewDefinition);
+				}
+			}
+		}
+
+		// add check
+		viewDefinitions = addMessageRegistry[messageType];
+		if (viewDefinitions) {
+			viewDefinitionCount = viewDefinitions.length;
+			for (i = 0; i < viewDefinitionCount; i++) {
+				viewDefinition = viewDefinitions[i];
+				if (!viewDefinition.view) {
+					addView(viewDefinition);
+				}
+			}
+		}
+
+		// remove check
+		viewDefinitions = removeMessageRegistry[messageType];
+		if (viewDefinitions) {
+			viewDefinitionCount = viewDefinitions.length;
+			for (i = 0; i < viewDefinitionCount; i++) {
+				viewDefinition = viewDefinitions[i];
+				if (viewDefinition.view) {
+					removeView(viewDefinition);
+				}
+			}
+		}
+	}
 
 }
 }

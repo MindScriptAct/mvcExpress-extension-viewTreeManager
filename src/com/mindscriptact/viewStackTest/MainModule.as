@@ -36,7 +36,7 @@ public class MainModule extends ModuleCore {
 		var rootDefinition:ViewDefinition = ViewTreeManager.initRootDefinition(mediatorMap, commandMap, main, MainMediator);
 		rootDefinition.positionAt(10, 10);
 		rootDefinition.sizeAs(1000, 500);
-		//*
+		/*
 		//
 		rootDefinition.addViews(
 				new ViewDefinition(MenuView, MenuViewMediator)
@@ -61,6 +61,28 @@ public class MainModule extends ModuleCore {
 						.removeOn(Message.ADD_TEST1, Message.ADD_TEST2)
 						.positionAt("^20", "20^")
 						.sizeAs("100", "100")
+		);
+		//*/
+
+
+		//*
+		//
+		rootDefinition.addViews(
+				new ViewDefinition(MenuView, MenuViewMediator)
+						.autoAdd()
+						.positionAt(10, 470)
+				, new ViewDefinition(TestView, TestMediator, ["Test 1"])
+						.toggleOn(Message.ADD_TEST1)
+						.positionAt(100, 100)
+						.sizeAs(200, 200)
+				, new ViewDefinition(TestView, TestMediator, ["Test 2"])
+						.toggleOn(Message.ADD_TEST2)
+						.positionAt(170, 170)
+						.sizeAs(200, 200)
+				, new ViewDefinition(TestView, TestMediator, ["Test 3"])
+						.toggleOn(Message.ADD_TEST3)
+						.positionAt(240, 240)
+						.sizeAs(200, 200)
 		);
 		//*/
 

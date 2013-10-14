@@ -41,6 +41,7 @@ public class ViewDefinition {
 	//
 	viewTreeNs var addMessages:Array;
 	viewTreeNs var removeMessages:Array;
+	viewTreeNs var toggleMessages:Array;
 	//
 	viewTreeNs var injectIntoParentVarName:String;
 	viewTreeNs var onAddParentFunctionName:String;
@@ -83,11 +84,14 @@ public class ViewDefinition {
 				viewDefinition.viewTreeManager = viewTreeManager;
 				viewDefinition.parent = this;
 				this.childViews.push(viewDefinition);
+				if (viewDefinition.toggleMessages) {
+					viewTreeManager.initToggleMessages(viewDefinition, viewDefinition.toggleMessages);
+				}
 				if (viewDefinition.addMessages) {
-					viewTreeManager.initAddMesages(viewDefinition, viewDefinition.addMessages);
+					viewTreeManager.initAddMessages(viewDefinition, viewDefinition.addMessages);
 				}
 				if (viewDefinition.removeMessages) {
-					viewTreeManager.initRemoveMesages(viewDefinition, viewDefinition.removeMessages);
+					viewTreeManager.initRemoveMessages(viewDefinition, viewDefinition.removeMessages);
 				}
 				if (viewDefinition.isAutoAdded) {
 					viewTreeManager.addView(viewDefinition);
@@ -111,6 +115,11 @@ public class ViewDefinition {
 
 	public function removeOn(...removeMessages:Array):ViewDefinition {
 		this.removeMessages = removeMessages;
+		return this;
+	}
+
+	public function toggleOn(...toggleMessages:Array):ViewDefinition {
+		this.toggleMessages = toggleMessages;
 		return this;
 	}
 
@@ -264,5 +273,7 @@ public class ViewDefinition {
 			return view.height;
 		}
 	}
+
+
 }
 }

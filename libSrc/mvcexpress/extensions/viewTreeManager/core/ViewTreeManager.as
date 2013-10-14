@@ -66,8 +66,10 @@ public class ViewTreeManager {
 
 		for (var i:int = 0; i < viewTreeCount; i++) {
 			var viewNode:ViewNode = viewNodes[i];
-			viewNode.trigerRemoveMessage(messageType);
-			viewNode.trigerAddMessage(messageType);
+			//viewNode.trigerRemoveMessage(messageType);
+			//viewNode.trigerAddMessage(messageType);
+
+			viewNode.triggerMessage(messageType);
 		}
 	}
 
