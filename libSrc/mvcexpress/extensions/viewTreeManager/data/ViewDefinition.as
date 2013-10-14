@@ -109,17 +109,65 @@ public class ViewDefinition {
 	}
 
 	public function addOn(...addMessages:Array):ViewDefinition {
-		this.addMessages = addMessages;
+		if (this.addMessages == null) {
+			this.addMessages = addMessages;
+		} else {
+			for (var i:int = 0; i < addMessages.length; i++) {
+				var newMessage:String = addMessages[i];
+				var needToAdd:Boolean = true;
+				for (var j:int = 0; j < this.addMessages.length; j++) {
+					if (newMessage == this.addMessages[j]) {
+						needToAdd = false;
+						break;
+					}
+				}
+				if (needToAdd) {
+					this.addMessages.push(newMessage);
+				}
+			}
+		}
 		return this;
 	}
 
 	public function removeOn(...removeMessages:Array):ViewDefinition {
-		this.removeMessages = removeMessages;
+		if (this.removeMessages == null) {
+			this.removeMessages = removeMessages;
+		} else {
+			for (var i:int = 0; i < removeMessages.length; i++) {
+				var newMessage:String = removeMessages[i];
+				var needToAdd:Boolean = true;
+				for (var j:int = 0; j < this.removeMessages.length; j++) {
+					if (newMessage == this.removeMessages[j]) {
+						needToAdd = false;
+						break;
+					}
+				}
+				if (needToAdd) {
+					this.removeMessages.push(newMessage);
+				}
+			}
+		}
 		return this;
 	}
 
 	public function toggleOn(...toggleMessages:Array):ViewDefinition {
-		this.toggleMessages = toggleMessages;
+		if (this.toggleMessages == null) {
+			this.toggleMessages = toggleMessages;
+		} else {
+			for (var i:int = 0; i < toggleMessages.length; i++) {
+				var newMessage:String = toggleMessages[i];
+				var needToAdd:Boolean = true;
+				for (var j:int = 0; j < this.toggleMessages.length; j++) {
+					if (newMessage == this.toggleMessages[j]) {
+						needToAdd = false;
+						break;
+					}
+				}
+				if (needToAdd) {
+					this.toggleMessages.push(newMessage);
+				}
+			}
+		}
 		return this;
 	}
 

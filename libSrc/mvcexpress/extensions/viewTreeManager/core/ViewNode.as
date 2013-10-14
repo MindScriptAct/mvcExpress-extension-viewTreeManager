@@ -285,36 +285,6 @@ public class ViewNode {
 		}
 	}
 
-
-	viewTreeNs function trigerAddMessage(messageType:String):void {
-		use namespace viewTreeNs;
-
-		// check add
-		var viewDefinitions:Vector.<ViewDefinition> = addMessageRegistry[messageType];
-		var viewDefinitionCount:int = viewDefinitions.length;
-		for (var i:int = 0; i < viewDefinitionCount; i++) {
-			var viewDefinition:ViewDefinition = viewDefinitions[i];
-			if (!viewDefinition.view) {
-				addView(viewDefinition);
-			}
-		}
-	}
-
-	viewTreeNs function trigerRemoveMessage(messageType:String):void {
-		use namespace viewTreeNs;
-
-		// check remove
-		var viewDefinitions:Vector.<ViewDefinition> = removeMessageRegistry[messageType];
-		var viewDefinitionCount:int = viewDefinitions.length;
-		for (var i:int = 0; i < viewDefinitionCount; i++) {
-			var viewDefinition:ViewDefinition = viewDefinitions[i];
-			if (viewDefinition.view) {
-				removeView(viewDefinition);
-			}
-		}
-	}
-
-
 	viewTreeNs function triggerMessage(messageType:String):void {
 
 		use namespace viewTreeNs;
@@ -338,18 +308,6 @@ public class ViewNode {
 			}
 		}
 
-		// add check
-		viewDefinitions = addMessageRegistry[messageType];
-		if (viewDefinitions) {
-			viewDefinitionCount = viewDefinitions.length;
-			for (i = 0; i < viewDefinitionCount; i++) {
-				viewDefinition = viewDefinitions[i];
-				if (!viewDefinition.view) {
-					addView(viewDefinition);
-				}
-			}
-		}
-
 		// remove check
 		viewDefinitions = removeMessageRegistry[messageType];
 		if (viewDefinitions) {
@@ -358,6 +316,18 @@ public class ViewNode {
 				viewDefinition = viewDefinitions[i];
 				if (viewDefinition.view) {
 					removeView(viewDefinition);
+				}
+			}
+		}
+
+		// add check
+		viewDefinitions = addMessageRegistry[messageType];
+		if (viewDefinitions) {
+			viewDefinitionCount = viewDefinitions.length;
+			for (i = 0; i < viewDefinitionCount; i++) {
+				viewDefinition = viewDefinitions[i];
+				if (!viewDefinition.view) {
+					addView(viewDefinition);
 				}
 			}
 		}
