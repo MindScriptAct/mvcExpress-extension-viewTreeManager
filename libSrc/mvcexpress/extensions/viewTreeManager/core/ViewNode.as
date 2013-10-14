@@ -178,17 +178,19 @@ public class ViewNode {
 					if (viewDefinition.useIndexing) {
 						// todo : find layer...
 						var addIndex:int = -1;
-
 						var nextDefinition:ViewDefinition = viewDefinition.nextSibling;
 						while (nextDefinition) {
-							var nextView:Object = childDefinition[nextDefinition];
-							nextDefinition = nextDefinition.nextSibling;
-							if (nextView != null) {
-								addIndex = parentView[viewDefinition.getIndexFunction](nextView);
-								nextDefinition = null;
+							if (nextDefinition.ignoreOrder) {
+								nextDefinition = nextDefinition.nextSibling;
+							} else {
+								var nextView:Object = childDefinition[nextDefinition];
+								nextDefinition = nextDefinition.nextSibling;
+								if (nextView != null) {
+									addIndex = parentView[viewDefinition.getIndexFunction](nextView);
+									nextDefinition = null;
+								}
 							}
 						}
-
 						if (addIndex > -1) {
 							parentView[viewDefinition.addIndexedFunction](view, addIndex);
 						} else {

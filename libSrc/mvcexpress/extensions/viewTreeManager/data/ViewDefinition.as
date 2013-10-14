@@ -11,6 +11,9 @@ import mvcexpress.extensions.viewTreeManager.namespace.viewTreeNs;
 
 use namespace viewTreeNs;
 
+/**
+ * Single view object definition.
+ */
 public class ViewDefinition {
 
 
@@ -69,6 +72,8 @@ public class ViewDefinition {
 	viewTreeNs var heightSizingType:int = 0;
 	viewTreeNs var _sizeWidth:Number;
 	viewTreeNs var _sizeHeight:Number;
+
+	viewTreeNs var ignoreOrder:Boolean;
 	///viewTreeNs var sizeDepth:Number;
 
 	public function ViewDefinition(viewClass:Class, mediatorClass:Class, viewParams:Array = null) {
@@ -85,40 +90,61 @@ public class ViewDefinition {
 		}
 	}
 
-	public function addViews(...views:Array):ViewDefinition {
+	public function pushViews(...views:Array):ViewDefinition {
+		use namespace viewTreeNs;
+
 		for (var i:int = 0; i < views.length; i++) {
-			// TODO : check for ViewDefinition ?
-			var viewDefinition:ViewDefinition = views[i] as ViewDefinition;
-			if (viewDefinition) {
-				viewDefinition.viewTreeManager = viewTreeManager;
-				viewDefinition.parent = this;
-
-				//
-				if (childHead) {
-					viewDefinition.nextSibling = childHead;
-				}
-				this.childHead = viewDefinition;
-
-				this.childViews.push(viewDefinition);
-
-				if (viewDefinition.toggleMessages) {
-					viewTreeManager.initToggleMessages(viewDefinition, viewDefinition.toggleMessages);
-				}
-				if (viewDefinition.addMessages) {
-					viewTreeManager.initAddMessages(viewDefinition, viewDefinition.addMessages);
-				}
-				if (viewDefinition.removeMessages) {
-					viewTreeManager.initRemoveMessages(viewDefinition, viewDefinition.removeMessages);
-				}
-				if (viewDefinition.isAutoAdded) {
-					viewTreeManager.addView(viewDefinition);
+			if (views[i] is ViewDefinition) {
+				pushViewDefinition(views[i] as ViewDefinition);
+			} else if (views[i] is ViewStackDefinition) {
+				var stackViews:Array = (views[i] as ViewStackDefinition).viewStack;
+				for (var j:int = 0; j < stackViews.length; j++) {
+					if (stackViews[j] is ViewDefinition) {
+						pushViewDefinition(stackViews[j] as ViewDefinition, true);
+					} else {
+						throw  Error("You can add only ViewDefinition objects to ViewStackDefinition.");
+					}
 				}
 			} else {
-				throw  Error("You can add only ViewDefinition objects.");
+				// todo : add list of supported classes...
+				throw  Error(views[i] + " type is not supported." /*"You can add only ViewDefinition objects."*/);
 			}
 		}
 		return this;
 	}
+
+	private function pushViewDefinition(viewDefinition:ViewDefinition, ignoreOrder:Boolean = false):ViewDefinition {
+		viewDefinition.viewTreeManager = viewTreeManager;
+		viewDefinition.parent = this;
+
+		//
+		if (childHead) {
+			viewDefinition.nextSibling = childHead;
+		}
+		this.childHead = viewDefinition;
+
+		//
+		viewDefinition.ignoreOrder = ignoreOrder;
+
+		//
+		this.childViews.push(viewDefinition);
+
+		if (viewDefinition.toggleMessages) {
+			viewTreeManager.initToggleMessages(viewDefinition, viewDefinition.toggleMessages);
+		}
+		if (viewDefinition.addMessages) {
+			viewTreeManager.initAddMessages(viewDefinition, viewDefinition.addMessages);
+		}
+		if (viewDefinition.removeMessages) {
+			viewTreeManager.initRemoveMessages(viewDefinition, viewDefinition.removeMessages);
+		}
+		if (viewDefinition.isAutoAdded) {
+			viewTreeManager.addView(viewDefinition);
+		}
+
+		return this;
+	}
+
 
 	public function autoAdd():ViewDefinition {
 		isAutoAdded = true;
