@@ -9,17 +9,22 @@ use namespace viewTreeNs;
  */
 public class ViewStackDefinition {
 
-	viewTreeNs var viewStack:Array;
+	viewTreeNs var stackViews:Array;
 
-	public function ViewStackDefinition(...viewStack:Array) {
-		this.viewStack = viewStack;
+	public function ViewStackDefinition(...stackViews:Array) {
+		this.stackViews = stackViews;
+		for (var i:int = 0; i < stackViews.length; i++) {
+			if (!stackViews is ViewDefinition) {
+				throw Error("You can add only ViewDefinition objects to ViewStackDefinition.");
+			}
+		}
 	}
 
 	public function addDefinition(viewDefinition:ViewDefinition):void {
-		if (viewStack == null) {
-			viewStack = [];
+		if (stackViews == null) {
+			stackViews = [];
 		}
-		viewStack.push(viewDefinition);
+		stackViews.push(viewDefinition);
 	}
 
 }

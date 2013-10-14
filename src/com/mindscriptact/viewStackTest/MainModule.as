@@ -7,8 +7,8 @@ import com.mindscriptact.viewStackTest.view.testView.TestMediator;
 import com.mindscriptact.viewStackTest.view.testView.TestView;
 
 import mvcexpress.extensions.viewTreeManager.core.ViewTreeManager;
+import mvcexpress.extensions.viewTreeManager.data.ViewComboDefinition;
 import mvcexpress.extensions.viewTreeManager.data.ViewDefinition;
-import mvcexpress.extensions.viewTreeManager.data.ViewStackDefinition;
 import mvcexpress.modules.ModuleCore;
 
 /**
@@ -37,6 +37,7 @@ public class MainModule extends ModuleCore {
 		var rootDefinition:ViewDefinition = ViewTreeManager.initRootDefinition(mediatorMap, commandMap, main, MainMediator);
 		rootDefinition.positionAt(10, 10);
 		rootDefinition.sizeAs(1000, 500);
+
 		/*
 		 //
 		 rootDefinition.pushViews(
@@ -88,27 +89,54 @@ public class MainModule extends ModuleCore {
 		 .positionAt(240, 240)
 		 .sizeAs(200, 200)
 		 );
-
-
 		 //*/
 
 
 		/*
-		 rootDefinition.pushViews( //
-		 new ViewDefinition(MenuView, MenuViewMediator)
-		 .autoAdd(), //
-		 new ViewStackDefinition(
-		 new ViewDefinition(TestView, TestMediator, ["Test 1"])
-		 .addOn(Message.ADD_TEST1), //
-		 new ViewDefinition(TestView, TestMediator, ["Test 2"])
-		 .addOn(Message.ADD_TEST2), //
-		 new ViewDefinition(TestView, TestMediator, ["Test 3"])
-		 .addOn(Message.ADD_TEST3) //
-		 )
-		 );
+		rootDefinition.pushViews( //
+				new ViewDefinition(MenuView, MenuViewMediator)
+						.autoAdd(), //
+				new ViewComboDefinition(
+						new ViewDefinition(TestView, TestMediator, ["Test 1"])
+								.addOn(Message.ADD_TEST1)
+								.positionAt(150, 150)
+								.sizeAs(200, 200)
+						, new ViewDefinition(TestView, TestMediator, ["Test 2"])
+								.addOn(Message.ADD_TEST2)
+								.positionAt(150, 150)
+								.sizeAs(200, 200)
+						, new ViewDefinition(TestView, TestMediator, ["Test 3"])
+								.addOn(Message.ADD_TEST3)
+								.positionAt(150, 150)
+								.sizeAs(200, 200)
+				).removeOn(Message.ADD_TEST4)
+		);
+		//*/
 
 
-		 /*
+		//*
+		rootDefinition.pushViews( //
+				new ViewDefinition(MenuView, MenuViewMediator)
+						.autoAdd(), //
+				new ViewComboDefinition(
+						new ViewDefinition(TestView, TestMediator, ["Test 1"])
+								.toggleOn(Message.ADD_TEST1)
+								.positionAt(150, 150)
+								.sizeAs(200, 200)
+						, new ViewDefinition(TestView, TestMediator, ["Test 2"])
+								.toggleOn(Message.ADD_TEST2)
+								.positionAt(160, 160)
+								.sizeAs(200, 200)
+						, new ViewDefinition(TestView, TestMediator, ["Test 3"])
+								.toggleOn(Message.ADD_TEST3)
+								.positionAt(170, 170)
+								.sizeAs(200, 200)
+				).removeOn(Message.ADD_TEST4)
+		);
+		//*/
+
+
+		/*
 		 //
 		 rootDefinition.pushViews(
 		 new ViewDefinition(MenuView, MenuViewMediator)
@@ -130,39 +158,33 @@ public class MainModule extends ModuleCore {
 		 .positionAt(240, 240)
 		 .sizeAs(200, 200)
 		 );
-
-
 		 //*/
 
-		//*/
-
-
-		//*
-		//
-		rootDefinition.pushViews(
-				new ViewDefinition(MenuView, MenuViewMediator)
-						.autoAdd()
-						.positionAt(10, "20^")
-				, new ViewStackDefinition(
-						new ViewDefinition(TestView, TestMediator, ["Test 1"])
-								.removeOn(Message.ADD_TEST1)
-								.toggleOn(Message.ADD_TEST1)
-								.positionAt(100, 100)
-								.sizeAs(200, 200)
-						, new ViewDefinition(TestView, TestMediator, ["Test 2"])
-								.addOn(Message.ADD_TEST2)
-								.removeOn(Message.ADD_TEST2)
-								.positionAt(170, 170)
-								.sizeAs(200, 200)
-						, new ViewDefinition(TestView, TestMediator, ["Test 3"])
-								.addOn(Message.ADD_TEST3)
-								.toggleOn(Message.ADD_TEST3)
-								.positionAt(240, 240)
-								.sizeAs(200, 200)
-				)
-		);
-
-		//*/
+		/*
+		 //
+		 rootDefinition.pushViews(
+		 new ViewDefinition(MenuView, MenuViewMediator)
+		 .autoAdd()
+		 .positionAt(10, "20^")
+		 , new ViewStackDefinition(
+		 new ViewDefinition(TestView, TestMediator, ["Test 1"])
+		 .removeOn(Message.ADD_TEST1)
+		 .toggleOn(Message.ADD_TEST1)
+		 .positionAt(100, 100)
+		 .sizeAs(200, 200)
+		 , new ViewDefinition(TestView, TestMediator, ["Test 2"])
+		 .addOn(Message.ADD_TEST2)
+		 .removeOn(Message.ADD_TEST2)
+		 .positionAt(170, 170)
+		 .sizeAs(200, 200)
+		 , new ViewDefinition(TestView, TestMediator, ["Test 3"])
+		 .addOn(Message.ADD_TEST3)
+		 .toggleOn(Message.ADD_TEST3)
+		 .positionAt(240, 240)
+		 .sizeAs(200, 200)
+		 )
+		 );
+		 //*/
 
 	}
 

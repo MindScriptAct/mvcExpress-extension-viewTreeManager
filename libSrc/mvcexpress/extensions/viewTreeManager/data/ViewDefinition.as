@@ -1,10 +1,3 @@
-/**
- * Created with IntelliJ IDEA.
- * User: rbanevicius
- * Date: 4/11/13
- * Time: 5:58 PM
- * To change this template use File | Settings | File Templates.
- */
 package mvcexpress.extensions.viewTreeManager.data {
 import mvcexpress.extensions.viewTreeManager.core.ViewNode;
 import mvcexpress.extensions.viewTreeManager.namespace.viewTreeNs;
@@ -96,9 +89,19 @@ public class ViewDefinition {
 		for (var i:int = 0; i < views.length; i++) {
 			if (views[i] is ViewDefinition) {
 				pushViewDefinition(views[i] as ViewDefinition);
+			} else if (views[i] is ViewComboDefinition) {
+				(views[i] as ViewComboDefinition).initComboDefinitions();
+				var comboViews:Array = (views[i] as ViewComboDefinition).comboViews;
+				for (var j:int = 0; j < comboViews.length; j++) {
+					if (comboViews[j] is ViewDefinition) {
+						pushViewDefinition(comboViews[j] as ViewDefinition, true);
+					} else {
+						throw  Error("You can add only ViewDefinition objects to ViewComboDefinition.");
+					}
+				}
 			} else if (views[i] is ViewStackDefinition) {
-				var stackViews:Array = (views[i] as ViewStackDefinition).viewStack;
-				for (var j:int = 0; j < stackViews.length; j++) {
+				var stackViews:Array = (views[i] as ViewStackDefinition).stackViews;
+				for (j = 0; j < stackViews.length; j++) {
 					if (stackViews[j] is ViewDefinition) {
 						pushViewDefinition(stackViews[j] as ViewDefinition, true);
 					} else {
@@ -180,7 +183,7 @@ public class ViewDefinition {
 			if (this.addMessages == null) {
 				this.addMessages = addMessages;
 			} else {
-				this.addMessages.concat(addMessages);
+				this.addMessages = this.addMessages.concat(addMessages);
 			}
 		}
 		return this;
@@ -215,7 +218,7 @@ public class ViewDefinition {
 			if (this.removeMessages == null) {
 				this.removeMessages = removeMessages;
 			} else {
-				this.removeMessages.concat(removeMessages);
+				this.removeMessages = this.removeMessages.concat(removeMessages);
 			}
 		}
 		return this;
