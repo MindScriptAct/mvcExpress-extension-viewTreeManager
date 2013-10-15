@@ -23,7 +23,7 @@ public class ViewComboDefinition {
 		}
 	}
 
-	public function addDefinition(viewDefinition:ViewDefinition):void {
+	public function addDefinition(viewDefinition:ViewDefinition):ViewComboDefinition {
 		if (comboViews == null) {
 			comboViews = [];
 		}
@@ -34,6 +34,8 @@ public class ViewComboDefinition {
 				viewDefinition.removeOn(removeMessages[j]);
 			}
 		}
+
+		return this;
 	}
 
 	public function removeOn(...removeMessages:Array):ViewComboDefinition {
@@ -44,16 +46,24 @@ public class ViewComboDefinition {
 				}
 			}
 		}
-		this.removeMessages = removeMessages;
+		if (this.removeMessages) {
+			this.removeMessages = this.removeMessages.concat(removeMessages);
+		} else {
+			this.removeMessages = removeMessages;
+		}
+
 		return this;
 	}
 
+
+	//-------------------------------
+	//
+	//-------------------------------
 
 	viewTreeNs function initComboDefinitions():void {
 
 		var messageRegistry:Dictionary = new Dictionary();
 		var allMessages:Vector.<String> = new <String>[];
-
 		var message:String;
 
 		// check for duplications.
@@ -83,7 +93,7 @@ public class ViewComboDefinition {
 			}
 		}
 
-		// add add or toggle messages to other viewDefinitions.
+		// add remove messages to other viewDefinitions.
 		for (i = 0; i < comboViews.length; i++) {
 			comboView = comboViews[i];
 			for (var j:int = 0; j < allMessages.length; j++) {
@@ -93,8 +103,6 @@ public class ViewComboDefinition {
 				}
 			}
 		}
-
-
 	}
 }
 }

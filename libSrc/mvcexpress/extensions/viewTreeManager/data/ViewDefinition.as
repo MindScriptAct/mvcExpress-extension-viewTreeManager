@@ -89,16 +89,28 @@ public class ViewDefinition {
 		for (var i:int = 0; i < views.length; i++) {
 			if (views[i] is ViewDefinition) {
 				pushViewDefinition(views[i] as ViewDefinition);
+
+			} else if (views[i] is ViewGroupDefinition) {
+				var groupViews:Array = (views[i] as ViewGroupDefinition).groupViews;
+				for (var j:int = 0; j < groupViews.length; j++) {
+					if (groupViews[j] is ViewDefinition) {
+						pushViewDefinition(groupViews[j] as ViewDefinition);
+					} else {
+						throw  Error("You can add only ViewDefinition objects to ViewGroupDefinition.");
+					}
+				}
+
 			} else if (views[i] is ViewComboDefinition) {
 				(views[i] as ViewComboDefinition).initComboDefinitions();
 				var comboViews:Array = (views[i] as ViewComboDefinition).comboViews;
-				for (var j:int = 0; j < comboViews.length; j++) {
+				for (j = 0; j < comboViews.length; j++) {
 					if (comboViews[j] is ViewDefinition) {
 						pushViewDefinition(comboViews[j] as ViewDefinition, true);
 					} else {
 						throw  Error("You can add only ViewDefinition objects to ViewComboDefinition.");
 					}
 				}
+
 			} else if (views[i] is ViewStackDefinition) {
 				var stackViews:Array = (views[i] as ViewStackDefinition).stackViews;
 				for (j = 0; j < stackViews.length; j++) {
@@ -108,6 +120,7 @@ public class ViewDefinition {
 						throw  Error("You can add only ViewDefinition objects to ViewStackDefinition.");
 					}
 				}
+
 			} else {
 				// todo : add list of supported classes...
 				throw  Error(views[i] + " type is not supported." /*"You can add only ViewDefinition objects."*/);
