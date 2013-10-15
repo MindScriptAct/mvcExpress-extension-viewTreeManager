@@ -1,3 +1,4 @@
+// Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 package mvcexpress.extensions.viewTreeManager.data {
 import mvcexpress.extensions.viewTreeManager.core.ViewNode;
 import mvcexpress.extensions.viewTreeManager.namespace.viewTreeNs;
@@ -6,9 +7,10 @@ use namespace viewTreeNs;
 
 /**
  * Single view object definition.
+ *
+ * @author Raimundas Banevicius (http://www.mindscriptact.com/)
  */
 public class ViewDefinition {
-
 
 	public static var NONE:int = 0;
 	public static var STATIC:int = 1;
@@ -21,9 +23,6 @@ public class ViewDefinition {
 	viewTreeNs var mediatorClass:Class;
 	viewTreeNs var viewParams:Array;
 
-	private var isAutoAdded:Boolean = false;
-
-	// TODO : internal...
 	viewTreeNs var childViews:Vector.<ViewDefinition> = new Vector.<ViewDefinition>();
 
 	viewTreeNs var viewTreeManager:ViewNode;
@@ -43,10 +42,12 @@ public class ViewDefinition {
 	viewTreeNs var getIndexFunction:String = "getChildIndex";
 	viewTreeNs var addFunction:String = "addChild";
 	viewTreeNs var removeFunction:String = "removeChild";
+
 	//
 	viewTreeNs var addMessages:Array;
 	viewTreeNs var removeMessages:Array;
 	viewTreeNs var toggleMessages:Array;
+
 	//
 	viewTreeNs var injectIntoParentVarName:String;
 	viewTreeNs var onAddParentFunctionName:String;
@@ -54,7 +55,7 @@ public class ViewDefinition {
 	viewTreeNs var onRemoveParentFunctionName:String;
 	viewTreeNs var onRemoveParentFunctionParams:Array;
 
-
+	//
 	viewTreeNs var xPositionType:int = 0;
 	viewTreeNs var posX:Number;
 	viewTreeNs var yPositionType:int = 0;
@@ -65,24 +66,30 @@ public class ViewDefinition {
 	viewTreeNs var heightSizingType:int = 0;
 	viewTreeNs var _sizeWidth:Number;
 	viewTreeNs var _sizeHeight:Number;
+	///viewTreeNs var _sizeDepth:Number;
 
 	viewTreeNs var ignoreOrder:Boolean;
-	///viewTreeNs var sizeDepth:Number;
+
+	private var isAutoAdded:Boolean = false;
 
 	public function ViewDefinition(viewClass:Class, mediatorClass:Class, viewParams:Array = null) {
 		this.viewClass = viewClass;
 		this.mediatorClass = mediatorClass;
 		this.viewParams = viewParams;
 		CONFIG::debug {
-
 			// TODO : check parameter count for viewClass ? does it match class constructor..
-
 			if (viewParams && viewParams.length > 10) {
 				throw Error("Only 10 view parameters supported.");
 			}
 		}
 	}
 
+	/**
+	 * Push view definitions as child's. (ViewDefinition, ViewComboDefinition, ViewGroupDefinition, ViewStackDefinition is supported.)
+	 * View definitions will be used to manage views automatically. (create, mediate, add as child to parent view, position,  size...)
+	 * @param views
+	 * @return
+	 */
 	public function pushViews(...views:Array):ViewDefinition {
 		use namespace viewTreeNs;
 
@@ -122,13 +129,13 @@ public class ViewDefinition {
 				}
 
 			} else {
-				// todo : add list of supported classes...
 				throw  Error(views[i] + " type is not supported." /*"You can add only ViewDefinition objects."*/);
 			}
 		}
 		return this;
 	}
 
+	// push one viewDefinition
 	private function pushViewDefinition(viewDefinition:ViewDefinition, ignoreOrder:Boolean = false):ViewDefinition {
 		viewDefinition.viewTreeManager = viewTreeManager;
 		viewDefinition.parent = this;
@@ -161,12 +168,20 @@ public class ViewDefinition {
 		return this;
 	}
 
-
+	/**
+	 * View will be added/mediated automatically with parent.
+	 * @return self
+	 */
 	public function autoAdd():ViewDefinition {
 		isAutoAdded = true;
 		return this;
 	}
 
+	/**
+	 * View will be added/mediated then one of those message are sent.
+	 * @param addMessages
+	 * @return
+	 */
 	public function addOn(...addMessages:Array):ViewDefinition {
 		for (var i:int = 0; i < addMessages.length; i++) {
 			var newMessage:String = addMessages[i];
@@ -192,16 +207,21 @@ public class ViewDefinition {
 					i--;
 				}
 			}
-
-			if (this.addMessages == null) {
-				this.addMessages = addMessages;
-			} else {
-				this.addMessages = this.addMessages.concat(addMessages);
-			}
 		}
+		if (this.addMessages == null) {
+			this.addMessages = addMessages;
+		} else {
+			this.addMessages = this.addMessages.concat(addMessages);
+		}
+
 		return this;
 	}
 
+	/**
+	 * View will be removed/unmediated then one of those message are sent.
+	 * @param removeMessages
+	 * @return
+	 */
 	public function removeOn(...removeMessages:Array):ViewDefinition {
 		for (var i:int = 0; i < removeMessages.length; i++) {
 			var newMessage:String = removeMessages[i];
@@ -227,16 +247,21 @@ public class ViewDefinition {
 					i--;
 				}
 			}
-
-			if (this.removeMessages == null) {
-				this.removeMessages = removeMessages;
-			} else {
-				this.removeMessages = this.removeMessages.concat(removeMessages);
-			}
 		}
+		if (this.removeMessages == null) {
+			this.removeMessages = removeMessages;
+		} else {
+			this.removeMessages = this.removeMessages.concat(removeMessages);
+		}
+
 		return this;
 	}
 
+	/**
+	 * View will be added or removed then one of those message are sent.
+	 * @param toggleMessages
+	 * @return
+	 */
 	public function toggleOn(...toggleMessages:Array):ViewDefinition {
 		for (var i:int = 0; i < toggleMessages.length; i++) {
 			var newMessage:String = toggleMessages[i];
@@ -267,31 +292,61 @@ public class ViewDefinition {
 		}
 		if (this.toggleMessages == null) {
 			this.toggleMessages = toggleMessages;
+		} else {
+			this.toggleMessages = this.toggleMessages.concat(toggleMessages);
 		}
+
 		return this;
 	}
 
+	/**
+	 * View object will be inject into parent view into this variable name.
+	 * @param varName
+	 * @return
+	 */
 	public function injectIntoParentAs(varName:String):ViewDefinition {
 		this.injectIntoParentVarName = varName;
 		return this;
 	}
 
+	/**
+	 * This function will be executed on parent view then view is added.
+	 * @param functionName
+	 * @param functionParams
+	 * @return
+	 */
 	public function executeParentFunctionOnAdd(functionName:String, functionParams:Array):ViewDefinition {
 		this.onAddParentFunctionName = functionName;
 		this.onAddParentFunctionParams = functionParams;
 		return this;
 	}
 
+	/**
+	 * This function will be executed on parent view then view is removed.
+	 * @param functionName
+	 * @param functionParams
+	 * @return
+	 */
 	public function executeParentFunctionOnRemove(functionName:String, functionParams:Array):ViewDefinition {
 		this.onRemoveParentFunctionName = functionName;
 		this.onRemoveParentFunctionParams = functionParams;
 		return this;
 	}
 
-	public function positionAt(x:Object, y:Object, z:Object = 0):ViewDefinition {
+	/**
+	 * Positions view after creation. Parameters can be numbers or Strings. Suported formants:                                        <br>
+	 * STATIC, fixed position: positionAt(10, 20);  positionAt("10", "20");                                                            <br>
+	 * PERCENTAGE, percentage of parents size : positionAt("10%", "20%");                                                            <br>
+	 * TOP/BOTTOM/LEFT/RIGHT, offset from parent object borders : positionAt("^10", "^20"); positionAt("10^", "20^");                <br>
+	 * CENTER/MIDDLE, offset from center : positionAt("|10", "|20"); positionAt("10|", "20|");                                    <br>
+	 *
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public function positionAt(x:Object, y:Object, z:Object = null):ViewDefinition {
 		var firstChar:String;
 		var lastChar:String;
-		var numberChars:String;
 
 		if (x is Number) {
 			xPositionType = STATIC;
@@ -355,6 +410,16 @@ public class ViewDefinition {
 		return this;
 	}
 
+	/**
+	 * Change size of the view. Supported formats:                                                                                <br>
+	 * STATIC, fixed size: positionAt(100, 200);  sizeAs("100", "200");                                                            <br>
+	 * PERCENTAGE, percentage of parents size : sizeAs("30%", "50%");                                                            <br>
+	 *
+	 * @param width
+	 * @param height
+	 * @param depth
+	 * @return
+	 */
 	public function sizeAs(width:Object, height:Object, depth:Object = 0):ViewDefinition {
 		var strLength:int;
 		var lastChar:String;
@@ -402,7 +467,12 @@ public class ViewDefinition {
 		return this;
 	}
 
-	public function get sizeWidth():Number {
+
+	//-------------------------------
+	// Internal
+	//-------------------------------
+
+	viewTreeNs function get sizeWidth():Number {
 		if (widthSizingType == STATIC) {
 			return _sizeWidth;
 		} else if (widthSizingType == PERCENTAGE && view.parent) {
@@ -412,7 +482,7 @@ public class ViewDefinition {
 		}
 	}
 
-	public function get sizeHeight():Number {
+	viewTreeNs function get sizeHeight():Number {
 		if (heightSizingType == STATIC) {
 			return _sizeHeight;
 		} else if (heightSizingType == PERCENTAGE && view.parent) {

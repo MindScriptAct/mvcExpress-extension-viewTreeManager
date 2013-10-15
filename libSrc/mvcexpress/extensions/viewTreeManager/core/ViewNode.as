@@ -1,3 +1,4 @@
+// Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 package mvcexpress.extensions.viewTreeManager.core {
 import flash.utils.Dictionary;
 
@@ -7,6 +8,11 @@ import mvcexpress.extensions.viewTreeManager.commands.ViewTreeCommand;
 import mvcexpress.extensions.viewTreeManager.data.ViewDefinition;
 import mvcexpress.extensions.viewTreeManager.namespace.viewTreeNs;
 
+/**
+ * Class for view node management and data holding.
+ *
+ * @author Raimundas Banevicius (http://www.mindscriptact.com/)
+ */
 public class ViewNode {
 
 	private var moduleMediatorMap:MediatorMap;
@@ -277,20 +283,6 @@ public class ViewNode {
 	//		message handling
 	//----------------------------------
 
-
-	viewTreeNs function initToggleMessages(viewDefinition:ViewDefinition, toggleMessages:Array):void {
-		for (var i:int = 0; i < toggleMessages.length; i++) {
-			var message:String = toggleMessages[i];
-			if (toggleMessageRegistry[message] == null) {
-				toggleMessageRegistry[message] = new Vector.<ViewDefinition>();
-				if (!moduleCommandMap.isMapped(message, ViewTreeCommand)) {
-					moduleCommandMap.map(message, ViewTreeCommand)
-				}
-			}
-			toggleMessageRegistry[message].push(viewDefinition);
-		}
-	}
-
 	viewTreeNs function initAddMessages(viewDefinition:ViewDefinition, addMessages:Array):void {
 		for (var i:int = 0; i < addMessages.length; i++) {
 			var message:String = addMessages[i];
@@ -317,8 +309,20 @@ public class ViewNode {
 		}
 	}
 
-	viewTreeNs function triggerMessage(messageType:String):void {
+	viewTreeNs function initToggleMessages(viewDefinition:ViewDefinition, toggleMessages:Array):void {
+		for (var i:int = 0; i < toggleMessages.length; i++) {
+			var message:String = toggleMessages[i];
+			if (toggleMessageRegistry[message] == null) {
+				toggleMessageRegistry[message] = new Vector.<ViewDefinition>();
+				if (!moduleCommandMap.isMapped(message, ViewTreeCommand)) {
+					moduleCommandMap.map(message, ViewTreeCommand)
+				}
+			}
+			toggleMessageRegistry[message].push(viewDefinition);
+		}
+	}
 
+	viewTreeNs function triggerMessage(messageType:String):void {
 		use namespace viewTreeNs;
 
 		var viewDefinitions:Vector.<ViewDefinition>;

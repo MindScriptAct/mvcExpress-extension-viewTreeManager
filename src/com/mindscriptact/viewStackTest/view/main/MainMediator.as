@@ -5,7 +5,7 @@ import mvcexpress.mvc.Mediator;
 
 /**
  * TODO:CLASS COMMENT
- * @author rbanevicius
+ * @author Raimundas Banevicius (http://www.mindscriptact.com/)
  */
 public class MainMediator extends Mediator {
 

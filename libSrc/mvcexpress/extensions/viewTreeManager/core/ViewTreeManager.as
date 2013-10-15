@@ -8,39 +8,36 @@ import mvcexpress.extensions.viewTreeManager.data.ViewDefinition;
 import mvcexpress.extensions.viewTreeManager.namespace.viewTreeNs;
 
 /**
- * Core Module class, represents single application unit in mvcExpress framework.
- * <p>
- * It starts framework and lets you set up your application. (or execute Commands for set up.)
- * You can create modular application by having more then one module.
- * </p>
- * @author Raimundas Banevicius (http://www.mindscriptact.com/)
+ * View tree manager to define view tree.
  *
- * @version scoped.1.0.beta2
+ * @author Raimundas Banevicius (http://www.mindscriptact.com/)
  */
 public class ViewTreeManager {
-
 
 	private static var viewTreeRegistryRoot:Dictionary = new Dictionary();
 
 	private static var viewNodes:Vector.<ViewNode> = new Vector.<ViewNode>();
 
-
+	/**
+	 * Initialize root definition. (should be called from module)
+	 * @param mediatorMap
+	 * @param commandMap
+	 * @param rootView
+	 * @param rootMediatorClass
+	 * @return
+	 */
 	public static function initRootDefinition(mediatorMap:MediatorMap, commandMap:CommandMap, rootView:Object, rootMediatorClass:Class):ViewDefinition {
-
 		if (!viewTreeRegistryRoot[rootView]) {
+			use namespace viewTreeNs;
 
 			// TODO: check mediatorMap, commandMap... root?
-
 			var viewNode:ViewNode = new ViewNode(mediatorMap, commandMap);
 			viewTreeRegistryRoot[rootView] = viewNode;
 			viewNodes.push(viewNode);
 
-			use namespace viewTreeNs;
-
 			return viewNode.initNewDefinition(rootView, rootMediatorClass);
-
 		} else {
-			throw  Error("Object:" + rootView + " already used for view tree.");
+			throw Error("Object:" + rootView + " already used for view tree.");
 		}
 	}
 
@@ -51,19 +48,16 @@ public class ViewTreeManager {
 	viewTreeNs static function getRootDefinition(root:Object):ViewDefinition {
 		var retVal:ViewDefinition;
 		var viewNode:ViewNode = viewTreeRegistryRoot[root];
-
 		if (viewNode) {
 			retVal = viewNode.getRootDefinition();
 		}
 		return retVal;
 	}
 
-
-	viewTreeNs static function trigerMessage(messageType:String):void {
+	viewTreeNs static function triggerMessage(messageType:String):void {
 		use namespace viewTreeNs;
 
 		var viewTreeCount:int = viewNodes.length;
-
 		for (var i:int = 0; i < viewTreeCount; i++) {
 			var viewNode:ViewNode = viewNodes[i];
 			viewNode.triggerMessage(messageType);

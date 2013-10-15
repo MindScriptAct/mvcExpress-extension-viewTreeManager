@@ -1,3 +1,4 @@
+// Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
 package mvcexpress.extensions.viewTreeManager.data {
 import flash.utils.Dictionary;
 
@@ -7,6 +8,8 @@ use namespace viewTreeNs;
 
 /**
  * Group of views, only one will be visible at same depth.
+ *
+ * @author Raimundas Banevicius (http://www.mindscriptact.com/)
  */
 public class ViewComboDefinition {
 
