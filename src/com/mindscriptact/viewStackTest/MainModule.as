@@ -1,16 +1,14 @@
 package com.mindscriptact.viewStackTest {
+import com.mindscriptact.viewStackTest.controller.tests.*;
 import com.mindscriptact.viewStackTest.messages.Message;
+import com.mindscriptact.viewStackTest.model.keyboard.KeyboardProxy;
 import com.mindscriptact.viewStackTest.view.main.MainMediator;
-import com.mindscriptact.viewStackTest.view.menu.MenuView;
-import com.mindscriptact.viewStackTest.view.menu.MenuViewMediator;
-import com.mindscriptact.viewStackTest.view.testView.TestMediator;
 import com.mindscriptact.viewStackTest.view.testView.TestView;
 
+import flash.ui.Keyboard;
+
 import mvcexpress.extensions.viewTreeManager.core.ViewTreeManager;
-import mvcexpress.extensions.viewTreeManager.data.ViewComboDefinition;
 import mvcexpress.extensions.viewTreeManager.data.ViewDefinition;
-import mvcexpress.extensions.viewTreeManager.data.ViewGroupDefinition;
-import mvcexpress.extensions.viewTreeManager.data.ViewStackDefinition;
 import mvcexpress.modules.ModuleCore;
 
 /**
@@ -29,6 +27,32 @@ public class MainModule extends ModuleCore {
 
 	public function start(main:Main):void {
 
+
+		var keyboardProxy:KeyboardProxy = new KeyboardProxy(main.stage)
+		proxyMap.map(keyboardProxy);
+
+		keyboardProxy.registerMessageSendOnPress(Keyboard.F1, Message.TRIGER_F1_TEST, main);
+		keyboardProxy.registerMessageSendOnPress(Keyboard.F2, Message.TRIGER_F2_TEST, main);
+		keyboardProxy.registerMessageSendOnPress(Keyboard.F3, Message.TRIGER_F3_TEST, main);
+		keyboardProxy.registerMessageSendOnPress(Keyboard.F4, Message.TRIGER_F4_TEST, main);
+		keyboardProxy.registerMessageSendOnPress(Keyboard.F5, Message.TRIGER_F5_TEST, main);
+		keyboardProxy.registerMessageSendOnPress(Keyboard.F6, Message.TRIGER_F6_TEST, main);
+		keyboardProxy.registerMessageSendOnPress(Keyboard.F7, Message.TRIGER_F7_TEST, main);
+		keyboardProxy.registerMessageSendOnPress(Keyboard.F8, Message.TRIGER_F8_TEST, main);
+		keyboardProxy.registerMessageSendOnPress(Keyboard.F9, Message.TRIGER_F9_TEST, main);
+
+
+		commandMap.map(Message.TRIGER_F1_TEST, F1TestCommand);
+		commandMap.map(Message.TRIGER_F2_TEST, F2TestCommand);
+		commandMap.map(Message.TRIGER_F3_TEST, F3TestCommand);
+		commandMap.map(Message.TRIGER_F4_TEST, F4TestCommand);
+		commandMap.map(Message.TRIGER_F5_TEST, F5TestCommand);
+		commandMap.map(Message.TRIGER_F6_TEST, F6TestCommand);
+		commandMap.map(Message.TRIGER_F7_TEST, F7TestCommand);
+		commandMap.map(Message.TRIGER_F8_TEST, F8TestCommand);
+		commandMap.map(Message.TRIGER_F9_TEST, F9TestCommand);
+
+
 		var testView:TestView = new TestView("Stage");
 		main.addChild(testView);
 		testView.width = 1000;
@@ -37,180 +61,8 @@ public class MainModule extends ModuleCore {
 
 		//
 		var rootDefinition:ViewDefinition = ViewTreeManager.initRootDefinition(mediatorMap, commandMap, main, MainMediator);
-		rootDefinition.positionAt(10, 10);
-		rootDefinition.sizeAs(1000, 500);
-
-		/*
-		//
-		rootDefinition.pushViews(
-				new ViewDefinition(MenuView, MenuViewMediator)
-						.autoAdd()
-						.positionAt(10, "20^")
-				, new ViewDefinition(TestView, TestMediator, ["Test 1"])
-						.addOn(Message.ADD_TEST1)
-						.removeOn(Message.ADD_TEST2, Message.ADD_TEST3)
-						.injectIntoParentAs("testView")
-						.executeParentFunctionOnAdd("handleTestView1Added", ["params...", 1])
-						.executeParentFunctionOnRemove("hadleTestView1Removed", ["More params..."])
-						.positionAt(50, 50)
-						.sizeAs(100, 200)
-		 				.autoAdd()
-				, new ViewDefinition(TestView, TestMediator, ["Test 2"])
-						.addOn(Message.ADD_TEST2)
-						.removeOn(Message.ADD_TEST1, Message.ADD_TEST3)
-						.positionAt("|0", "0|")
-						.sizeAs("50%", "50%")
-				, new ViewDefinition(TestView, TestMediator, ["Test 3"])
-						.addOn(Message.ADD_TEST3)
-						.removeOn(Message.ADD_TEST1, Message.ADD_TEST2)
-						.positionAt("^20", "20^")
-						.sizeAs("100", "100")
-		);
-		//*/
-
-
-
-		/*
-		//
-		rootDefinition.pushViews(
-				new ViewDefinition(MenuView, MenuViewMediator)
-						.autoAdd()
-						.positionAt(10, "20^")
-				, new ViewDefinition(TestView, TestMediator, ["Test 1"])
-						.removeOn(Message.ADD_TEST1)
-						.toggleOn(Message.ADD_TEST1)
-						.positionAt(100, 100)
-						.sizeAs(200, 200)
-				, new ViewDefinition(TestView, TestMediator, ["Test 2"])
-						.addOn(Message.ADD_TEST2)
-						.removeOn(Message.ADD_TEST2)
-						.positionAt(170, 170)
-						.sizeAs(200, 200)
-				, new ViewDefinition(TestView, TestMediator, ["Test 3"])
-						.addOn(Message.ADD_TEST3)
-						.toggleOn(Message.ADD_TEST3)
-						.positionAt(240, 240)
-						.sizeAs(200, 200)
-		);
-		//*/
-
-
-		/*
-		rootDefinition.pushViews( //
-				new ViewDefinition(MenuView, MenuViewMediator)
-						.autoAdd(), //
-				new ViewComboDefinition(
-						new ViewDefinition(TestView, TestMediator, ["Test 1"])
-								.addOn(Message.ADD_TEST1)
-								.positionAt(150, 150)
-								.sizeAs(200, 200)
-						, new ViewDefinition(TestView, TestMediator, ["Test 2"])
-								.addOn(Message.ADD_TEST2)
-								.positionAt(150, 150)
-								.sizeAs(200, 200)
-						, new ViewDefinition(TestView, TestMediator, ["Test 3"])
-								.addOn(Message.ADD_TEST3)
-								.positionAt(150, 150)
-								.sizeAs(200, 200)
-				).removeOn(Message.ADD_TEST4)
-		);
-		//*/
-
-
-		/*
-		rootDefinition.pushViews( //
-				new ViewDefinition(MenuView, MenuViewMediator)
-						.autoAdd(), //
-				new ViewComboDefinition(
-						new ViewDefinition(TestView, TestMediator, ["Test 1"])
-								.toggleOn(Message.ADD_TEST1)
-								.positionAt(150, 150)
-								.sizeAs(200, 200)
-						, new ViewDefinition(TestView, TestMediator, ["Test 2"])
-								.toggleOn(Message.ADD_TEST2)
-								.positionAt(160, 160)
-								.sizeAs(200, 200)
-						, new ViewDefinition(TestView, TestMediator, ["Test 3"])
-								.toggleOn(Message.ADD_TEST3)
-								.positionAt(170, 170)
-								.sizeAs(200, 200)
-				).removeOn(Message.ADD_TEST4)
-		);
-		//*/
-
-
-		/*
-		rootDefinition.pushViews(
-				new ViewDefinition(MenuView, MenuViewMediator)
-						.autoAdd()
-						.positionAt(10, "20^")
-				, new ViewDefinition(TestView, TestMediator, ["Test 1"])
-						.removeOn(Message.ADD_TEST1)
-						.toggleOn(Message.ADD_TEST1)
-						.positionAt(100, 100)
-						.sizeAs(200, 200)
-				, new ViewDefinition(TestView, TestMediator, ["Test 2"])
-						.addOn(Message.ADD_TEST2)
-						.removeOn(Message.ADD_TEST2)
-						.positionAt(170, 170)
-						.sizeAs(200, 200)
-				, new ViewDefinition(TestView, TestMediator, ["Test 3"])
-						.addOn(Message.ADD_TEST3)
-						.toggleOn(Message.ADD_TEST3)
-						.positionAt(240, 240)
-						.sizeAs(200, 200)
-		);
-		//*/
-
-		/*
-		rootDefinition.pushViews(
-				new ViewDefinition(MenuView, MenuViewMediator)
-						.autoAdd()
-						.positionAt(10, "20^")
-				, new ViewStackDefinition(
-						new ViewDefinition(TestView, TestMediator, ["Test 1"])
-								.removeOn(Message.ADD_TEST1)
-								.toggleOn(Message.ADD_TEST1)
-								.positionAt(100, 100)
-								.sizeAs(200, 200)
-						, new ViewDefinition(TestView, TestMediator, ["Test 2"])
-								.addOn(Message.ADD_TEST2)
-								.removeOn(Message.ADD_TEST2)
-								.positionAt(170, 170)
-								.sizeAs(200, 200)
-						, new ViewDefinition(TestView, TestMediator, ["Test 3"])
-								.addOn(Message.ADD_TEST3)
-								.toggleOn(Message.ADD_TEST3)
-								.positionAt(240, 240)
-								.sizeAs(200, 200)
-				)
-		);
-		//*/
-
-
-		//*
-		rootDefinition.pushViews(
-				new ViewDefinition(MenuView, MenuViewMediator)
-						.autoAdd(),
-				new ViewGroupDefinition(
-						new ViewDefinition(TestView, TestMediator, ["Test 1"])
-								.addOn(Message.ADD_TEST2)
-								.positionAt(150, 150)
-								.sizeAs(200, 200)
-						, new ViewDefinition(TestView, TestMediator, ["Test 2"])
-								.toggleOn(Message.ADD_TEST2)
-								.removeOn(Message.ADD_TEST3)
-								.positionAt(200, 200)
-								.sizeAs(200, 200)
-						, new ViewDefinition(TestView, TestMediator, ["Test 3"])
-								.removeOn(Message.ADD_TEST3)
-								.positionAt(250, 250)
-								.sizeAs(200, 200)
-				)
-						.addOn(Message.ADD_TEST1)
-						.removeOn(Message.ADD_TEST4)
-		);
-		//*/
+		rootDefinition.positionTo(10, 10);
+		rootDefinition.sizeTo(1000, 500);
 
 	}
 

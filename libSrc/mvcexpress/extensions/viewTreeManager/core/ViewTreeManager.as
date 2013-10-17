@@ -35,24 +35,34 @@ public class ViewTreeManager {
 			viewTreeRegistryRoot[rootView] = viewNode;
 			viewNodes.push(viewNode);
 
-			return viewNode.initNewDefinition(rootView, rootMediatorClass);
+			return viewNode.initDefinition(rootView, rootMediatorClass);
 		} else {
 			throw Error("Object:" + rootView + " already used for view tree.");
 		}
 	}
 
-	//----------------------------------
-	//		internals
-	//----------------------------------
-
-	viewTreeNs static function getRootDefinition(root:Object):ViewDefinition {
+	public static function getRootDefinition(viewObject:Object):ViewDefinition {
 		var retVal:ViewDefinition;
-		var viewNode:ViewNode = viewTreeRegistryRoot[root];
+		var viewNode:ViewNode = viewTreeRegistryRoot[viewObject];
 		if (viewNode) {
 			retVal = viewNode.getRootDefinition();
 		}
 		return retVal;
 	}
+
+	public static function getChildViewDefinition(viewObject:Object):ViewDefinition {
+		use namespace viewTreeNs;
+
+		var retVal:ViewDefinition;
+		for (var i:int = 0; i < viewNodes.length; i++) {
+			retVal = viewNodes[i].getViewDefinition(viewObject);
+		}
+		return retVal;
+	}
+
+	//----------------------------------
+	//		internals
+	//----------------------------------
 
 	viewTreeNs static function triggerMessage(messageType:String):void {
 		use namespace viewTreeNs;

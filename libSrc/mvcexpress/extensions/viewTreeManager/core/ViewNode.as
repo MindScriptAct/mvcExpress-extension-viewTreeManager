@@ -5,6 +5,8 @@ import flash.utils.Dictionary;
 import mvcexpress.core.CommandMap;
 import mvcexpress.core.MediatorMap;
 import mvcexpress.extensions.viewTreeManager.commands.ViewTreeCommand;
+import mvcexpress.extensions.viewTreeManager.data.BaseDefinition;
+import mvcexpress.extensions.viewTreeManager.data.ViewConstants;
 import mvcexpress.extensions.viewTreeManager.data.ViewDefinition;
 import mvcexpress.extensions.viewTreeManager.namespace.viewTreeNs;
 
@@ -18,16 +20,14 @@ public class ViewNode {
 	private var moduleMediatorMap:MediatorMap;
 	private var moduleCommandMap:CommandMap;
 
-	private var viewRegistry:Dictionary = new Dictionary();
-
-
 	private var toggleMessageRegistry:Dictionary = new Dictionary();
 	private var addMessageRegistry:Dictionary = new Dictionary();
 	private var removeMessageRegistry:Dictionary = new Dictionary();
 
 	private var rootDefinition:ViewDefinition;
 
-	private var childDefinition:Dictionary = new Dictionary(); // view object by definition
+	private var childDefinitions:Dictionary = new Dictionary(); // view views by definition
+	private var childViews:Dictionary = new Dictionary(); // view definitions by views
 
 	public function ViewNode(mediatorMap:MediatorMap, commandMap:CommandMap) {
 		this.moduleMediatorMap = mediatorMap;
@@ -38,86 +38,110 @@ public class ViewNode {
 		return rootDefinition;
 	}
 
+	public function getViewDefinition(view:Object):ViewDefinition {
+		return childViews[view];
+	}
+
+
 	//----------------------------------
 	//		view definition
 	//----------------------------------
 
-	viewTreeNs function initNewDefinition(root:Object, rootMediatorClass:Class):ViewDefinition {
+	viewTreeNs function initDefinition(view:Object, viewMediatorClass:Class):ViewDefinition {
 		use namespace viewTreeNs;
 
 		if (!rootDefinition) {
-			rootDefinition = new ViewDefinition(root.constructor, rootMediatorClass);
-			rootDefinition.viewTreeManager = this;
+			rootDefinition = new ViewDefinition(view.constructor, viewMediatorClass);
+			rootDefinition.viewNode = this;
 
-			viewRegistry[rootDefinition] = root;
-			rootDefinition.view = root;
+			rootDefinition.view = view;
+			rootDefinition.viewClass = view.constructor;
+			rootDefinition.mediatorClass = viewMediatorClass;
 
-			moduleMediatorMap.map(root.constructor, rootMediatorClass);
+			childDefinitions[rootDefinition] = view;
+			childViews[view] = rootDefinition;
+
+			moduleMediatorMap.map(view.constructor, viewMediatorClass);
 			rootDefinition.isMapped = true;
 			rootDefinition.parent = null; // root parent.
-			moduleMediatorMap.mediate(root);
+			moduleMediatorMap.mediate(view);
 		} else {
 			throw Error("Root is already defined with " + rootDefinition.view);
 		}
 		return rootDefinition;
 	}
 
+	viewTreeNs function disposeDefinition(viewDefinition:BaseDefinition):void {
+		use namespace viewTreeNs;
+
+		if (viewDefinition is ViewDefinition) {
+			if (moduleMediatorMap.isMapped(viewDefinition.viewClass, (viewDefinition as ViewDefinition).mediatorClass)) {
+				moduleMediatorMap.unmap(viewDefinition.viewClass, (viewDefinition as ViewDefinition).mediatorClass);
+			}
+		}
+		viewDefinition.dispose();
+	}
+
+
 	//----------------------------------
 	//		views
 	//----------------------------------
 
-	viewTreeNs function addView(viewDefinition:ViewDefinition):void {
+	viewTreeNs function addView(viewDefinition:BaseDefinition):void {
 		use namespace viewTreeNs;
 
 		// check if mediator is mapped.
-		if (!viewDefinition.isMapped) {
-			viewDefinition.isMapped = true;
-			if (!moduleMediatorMap.isMapped(viewDefinition.viewClass, viewDefinition.mediatorClass)) {
-				moduleMediatorMap.map(viewDefinition.viewClass, viewDefinition.mediatorClass);
+		if (viewDefinition is ViewDefinition) {
+			var mediatedViewDefinition:ViewDefinition = viewDefinition as ViewDefinition;
+			if (!mediatedViewDefinition.isMapped) {
+				mediatedViewDefinition.isMapped = true;
+				if (!moduleMediatorMap.isMapped(viewDefinition.viewClass, mediatedViewDefinition.mediatorClass)) {
+					moduleMediatorMap.map(viewDefinition.viewClass, mediatedViewDefinition.mediatorClass);
+				}
 			}
 		}
 		// check if parent is created.
-		var parent:ViewDefinition = viewDefinition.parent;
+		var parent:BaseDefinition = viewDefinition.parent;
 		if (parent) { // check if parent is not root.
-			var parentView:Object = viewRegistry[parent];
+			var parentView:Object = childDefinitions[parent];
 			if (parentView) { // check if parent view is added.
 				if (!viewDefinition.view) { // check if object already created..
-					var viewParams:Array = viewDefinition.viewParams;
+					var constructParams:Array = viewDefinition.constructParams;
 					var view:Object;
-					if (viewParams != null) {
-						switch (viewParams.length) {
+					if (constructParams != null) {
+						switch (constructParams.length) {
 							case 0:
 								view = new viewDefinition.viewClass();
 								break;
 							case 1:
-								view = new viewDefinition.viewClass(viewParams[0]);
+								view = new viewDefinition.viewClass(constructParams[0]);
 								break;
 							case 2:
-								view = new viewDefinition.viewClass(viewParams[0], viewParams[1]);
+								view = new viewDefinition.viewClass(constructParams[0], constructParams[1]);
 								break;
 							case 3:
-								view = new viewDefinition.viewClass(viewParams[0], viewParams[1], viewParams[2]);
+								view = new viewDefinition.viewClass(constructParams[0], constructParams[1], constructParams[2]);
 								break;
 							case 4:
-								view = new viewDefinition.viewClass(viewParams[0], viewParams[1], viewParams[2], viewParams[3]);
+								view = new viewDefinition.viewClass(constructParams[0], constructParams[1], constructParams[2], constructParams[3]);
 								break;
 							case 5:
-								view = new viewDefinition.viewClass(viewParams[0], viewParams[1], viewParams[2], viewParams[3], viewParams[4]);
+								view = new viewDefinition.viewClass(constructParams[0], constructParams[1], constructParams[2], constructParams[3], constructParams[4]);
 								break;
 							case 6:
-								view = new viewDefinition.viewClass(viewParams[0], viewParams[1], viewParams[2], viewParams[3], viewParams[4], viewParams[5]);
+								view = new viewDefinition.viewClass(constructParams[0], constructParams[1], constructParams[2], constructParams[3], constructParams[4], constructParams[5]);
 								break;
 							case 7:
-								view = new viewDefinition.viewClass(viewParams[0], viewParams[1], viewParams[2], viewParams[3], viewParams[4], viewParams[5], viewParams[6]);
+								view = new viewDefinition.viewClass(constructParams[0], constructParams[1], constructParams[2], constructParams[3], constructParams[4], constructParams[5], constructParams[6]);
 								break;
 							case 8:
-								view = new viewDefinition.viewClass(viewParams[0], viewParams[1], viewParams[2], viewParams[3], viewParams[4], viewParams[5], viewParams[6], viewParams[7]);
+								view = new viewDefinition.viewClass(constructParams[0], constructParams[1], constructParams[2], constructParams[3], constructParams[4], constructParams[5], constructParams[6], constructParams[7]);
 								break;
 							case 9:
-								view = new viewDefinition.viewClass(viewParams[0], viewParams[1], viewParams[2], viewParams[3], viewParams[4], viewParams[5], viewParams[6], viewParams[7], viewParams[8]);
+								view = new viewDefinition.viewClass(constructParams[0], constructParams[1], constructParams[2], constructParams[3], constructParams[4], constructParams[5], constructParams[6], constructParams[7], constructParams[8]);
 								break;
 							case 10:
-								view = new viewDefinition.viewClass(viewParams[0], viewParams[1], viewParams[2], viewParams[3], viewParams[4], viewParams[5], viewParams[6], viewParams[7], viewParams[8], viewParams[9]);
+								view = new viewDefinition.viewClass(constructParams[0], constructParams[1], constructParams[2], constructParams[3], constructParams[4], constructParams[5], constructParams[6], constructParams[7], constructParams[8], constructParams[9]);
 								break;
 							default:
 								throw Error("Too many view parameters, only 10 are suported.");
@@ -126,55 +150,68 @@ public class ViewNode {
 					} else {
 						view = new viewDefinition.viewClass();
 					}
+
+					// set custom params.
+					var viewParams:Object = viewDefinition.viewParams;
+					if (viewParams) {
+						for (var key:String in viewParams) {
+							try {
+								view[key] = viewParams[key];
+							} catch (error:Error) {
+								trace("ERROR: failed to set view (" + view + ") parameter(" + key + "), with value :" + viewParams[key] + " - " + error);
+							}
+						}
+					}
+
 					viewDefinition.view = view;
 
 					// sizing
-					if (viewDefinition.widthSizingType == ViewDefinition.STATIC) {
+					if (viewDefinition.widthSizingType == ViewConstants.STATIC) {
 						view.width = viewDefinition.sizeWidth;
-					} else if (viewDefinition.widthSizingType == ViewDefinition.PERCENTAGE) {
+					} else if (viewDefinition.widthSizingType == ViewConstants.PERCENTAGE) {
 						view.width = viewDefinition.parent.sizeWidth * (viewDefinition._sizeWidth / 100);
 					}
-					if (viewDefinition.widthSizingType == ViewDefinition.STATIC) {
+					if (viewDefinition.widthSizingType == ViewConstants.STATIC) {
 						view.height = viewDefinition.sizeHeight;
-					} else if (viewDefinition.widthSizingType == ViewDefinition.PERCENTAGE) {
+					} else if (viewDefinition.widthSizingType == ViewConstants.PERCENTAGE) {
 						view.height = viewDefinition.parent.sizeHeight * (viewDefinition._sizeHeight / 100);
 					}
 
 					/// positioning
 					if (viewDefinition.xPositionType > 0) {
 						switch (viewDefinition.xPositionType) {
-							case ViewDefinition.STATIC:
+							case ViewConstants.STATIC:
 								view.x = viewDefinition.posX;
 								break;
-							case ViewDefinition.PERCENTAGE:
+							case ViewConstants.PERCENTAGE:
 								view.x = viewDefinition.parent.sizeWidth * (viewDefinition.posX / 100) - viewDefinition.sizeWidth / 2;
 								break;
-							case ViewDefinition.CENTERED:
+							case ViewConstants.CENTERED:
 								view.x = viewDefinition.parent.sizeWidth / 2 - viewDefinition.sizeWidth / 2 + viewDefinition.posX;
 								break;
-							case ViewDefinition.START:
+							case ViewConstants.START:
 								view.x = viewDefinition.posX;
 								break;
-							case ViewDefinition.END:
+							case ViewConstants.END:
 								view.x = viewDefinition.parent.sizeWidth - viewDefinition.posX - viewDefinition.sizeWidth;
 								break;
 						}
 					}
 					if (viewDefinition.yPositionType > 0) {
 						switch (viewDefinition.yPositionType) {
-							case ViewDefinition.STATIC:
+							case ViewConstants.STATIC:
 								view.y = viewDefinition.posY;
 								break;
-							case ViewDefinition.PERCENTAGE:
+							case ViewConstants.PERCENTAGE:
 								view.y = viewDefinition.parent.sizeHeight * (viewDefinition.posY / 100) - viewDefinition.sizeHeight / 2;
 								break;
-							case ViewDefinition.CENTERED:
+							case ViewConstants.CENTERED:
 								view.y = viewDefinition.parent.sizeHeight / 2 - viewDefinition.sizeHeight / 2 + viewDefinition.posY;
 								break;
-							case ViewDefinition.START:
+							case ViewConstants.START:
 								view.y = viewDefinition.posY;
 								break;
-							case ViewDefinition.END:
+							case ViewConstants.END:
 								view.y = viewDefinition.parent.sizeHeight - viewDefinition.posY - viewDefinition.sizeHeight;
 								break;
 						}
@@ -184,12 +221,12 @@ public class ViewNode {
 					if (viewDefinition.useIndexing) {
 						// todo : find layer...
 						var addIndex:int = -1;
-						var nextDefinition:ViewDefinition = viewDefinition.nextSibling;
+						var nextDefinition:BaseDefinition = viewDefinition.nextSibling;
 						while (nextDefinition) {
 							if (nextDefinition.ignoreOrder) {
 								nextDefinition = nextDefinition.nextSibling;
 							} else {
-								var nextView:Object = childDefinition[nextDefinition];
+								var nextView:Object = childDefinitions[nextDefinition];
 								nextDefinition = nextDefinition.nextSibling;
 								if (nextView != null) {
 									addIndex = parentView[viewDefinition.getIndexFunction](nextView);
@@ -207,11 +244,15 @@ public class ViewNode {
 						parentView[viewDefinition.addFunction](view);
 					}
 
-					childDefinition[viewDefinition] = view;
+					//
+					if (viewDefinition is ViewDefinition) {
+						moduleMediatorMap.mediate(view);
+					}
 
 					//
-					moduleMediatorMap.mediate(view);
-					viewRegistry[viewDefinition] = view;
+					childDefinitions[viewDefinition] = view;
+					childViews[view] = viewDefinition;
+
 					// inject view to parent
 					if (viewDefinition.injectIntoParentVarName) {
 						try {
@@ -240,24 +281,27 @@ public class ViewNode {
 		}
 	}
 
-	viewTreeNs function removeView(viewDefinition:ViewDefinition):void {
+	viewTreeNs function removeView(viewDefinition:BaseDefinition):void {
 		var retVal:Boolean = false;
 
 		use namespace viewTreeNs;
 
 		// check if parent is created.
-		var parent:ViewDefinition = viewDefinition.parent;
+		var parent:BaseDefinition = viewDefinition.parent;
 		if (parent) { // check if parent is not root.
-			var parentView:Object = viewRegistry[parent];
+			var parentView:Object = childDefinitions[parent];
 			//
 			var view:Object = viewDefinition.view;
 			if (view) {
 				//
 				parentView[viewDefinition.removeFunction](view);
 				//
-				delete childDefinition[viewDefinition];
+				delete childViews[childDefinitions[viewDefinition]];
+				delete childDefinitions[viewDefinition];
 				//
-				moduleMediatorMap.unmediate(view);
+				if (viewDefinition is ViewDefinition) {
+					moduleMediatorMap.unmediate(view);
+				}
 				//
 				viewDefinition.view = null;
 				// execute parent function
@@ -283,7 +327,7 @@ public class ViewNode {
 	//		message handling
 	//----------------------------------
 
-	viewTreeNs function initAddMessages(viewDefinition:ViewDefinition, addMessages:Array):void {
+	viewTreeNs function initAddMessages(viewDefinition:BaseDefinition, addMessages:Array):void {
 		for (var i:int = 0; i < addMessages.length; i++) {
 			var message:String = addMessages[i];
 			if (addMessageRegistry[message] == null) {
@@ -296,7 +340,7 @@ public class ViewNode {
 		}
 	}
 
-	viewTreeNs function initRemoveMessages(viewDefinition:ViewDefinition, removeMessages:Array):void {
+	viewTreeNs function initRemoveMessages(viewDefinition:BaseDefinition, removeMessages:Array):void {
 		for (var i:int = 0; i < removeMessages.length; i++) {
 			var message:String = removeMessages[i];
 			if (removeMessageRegistry[message] == null) {
@@ -309,7 +353,7 @@ public class ViewNode {
 		}
 	}
 
-	viewTreeNs function initToggleMessages(viewDefinition:ViewDefinition, toggleMessages:Array):void {
+	viewTreeNs function initToggleMessages(viewDefinition:BaseDefinition, toggleMessages:Array):void {
 		for (var i:int = 0; i < toggleMessages.length; i++) {
 			var message:String = toggleMessages[i];
 			if (toggleMessageRegistry[message] == null) {
