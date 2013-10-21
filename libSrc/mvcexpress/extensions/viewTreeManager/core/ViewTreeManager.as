@@ -4,8 +4,12 @@ import flash.utils.Dictionary;
 
 import mvcexpress.core.CommandMap;
 import mvcexpress.core.MediatorMap;
+import mvcexpress.core.namespace.pureLegsCore;
 import mvcexpress.extensions.viewTreeManager.data.ViewDefinition;
 import mvcexpress.extensions.viewTreeManager.namespace.viewTreeNs;
+import mvcexpress.modules.ModuleCore;
+import mvcexpress.mvc.Mediator;
+import mvcexpress.utils.checkClassSuperclass;
 
 /**
  * View tree manager to define view tree.
@@ -26,11 +30,30 @@ public class ViewTreeManager {
 	 * @param rootMediatorClass
 	 * @return
 	 */
-	public static function initRootDefinition(mediatorMap:MediatorMap, commandMap:CommandMap, rootView:Object, rootMediatorClass:Class):ViewDefinition {
+	public static function initRootDefinition(module:ModuleCore, rootView:Object, rootMediatorClass:Class = null):ViewDefinition {
+
+		use namespace pureLegsCore;
+
+
+		var mediatorMap:MediatorMap = module.getMediatorMap();
+		var commandMap:CommandMap = module.getCommandMap();
+
+		if (mediatorMap == null || commandMap == null) {
+			throw Error("Can't init view tree manager with module:" + module + ", it looks like module is not ready yet. (mediatorMap and/or commandMap should not be null.)");
+		}
+
+		if (rootMediatorClass == null) {
+			rootMediatorClass = Mediator;
+		}
+		CONFIG::debug {
+			if (!checkClassSuperclass(rootMediatorClass, "mvcexpress.mvc::Mediator")) {
+				throw Error("rootMediatorClass:" + rootMediatorClass + " you are trying to use is not extended from 'mvcexpress.mvc::Mediator' class.");
+			}
+		}
+
 		if (!viewTreeRegistryRoot[rootView]) {
 			use namespace viewTreeNs;
 
-			// TODO: check mediatorMap, commandMap... root?
 			var viewNode:ViewNode = new ViewNode(mediatorMap, commandMap);
 			viewTreeRegistryRoot[rootView] = viewNode;
 			viewNodes.push(viewNode);

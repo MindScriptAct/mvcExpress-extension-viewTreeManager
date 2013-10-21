@@ -60,7 +60,7 @@ public class MainModule extends ModuleCore {
 		testView.alpha = 0.3;
 
 		//
-		var rootDefinition:ViewDefinition = ViewTreeManager.initRootDefinition(mediatorMap, commandMap, main, MainMediator);
+		var rootDefinition:ViewDefinition = ViewTreeManager.initRootDefinition(this, main);
 		rootDefinition.positionTo(10, 10);
 		rootDefinition.sizeTo(1000, 500);
 
