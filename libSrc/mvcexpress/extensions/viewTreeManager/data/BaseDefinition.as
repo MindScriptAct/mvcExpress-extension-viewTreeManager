@@ -50,11 +50,17 @@ public class BaseDefinition {
 	viewTreeNs var posY:Number;
 	//viewTreeNs var posZ:Number;
 
-	viewTreeNs var widthSizingType:int = 0;
-	viewTreeNs var heightSizingType:int = 0;
-	viewTreeNs var _sizeWidth:Number;
-	viewTreeNs var _sizeHeight:Number;
-	///viewTreeNs var _sizeDepth:Number;
+	viewTreeNs var trueWidthSizingType:int = 0;
+	viewTreeNs var trueHeightSizingType:int = 0;
+	viewTreeNs var _trueSizeWidth:Number;
+	viewTreeNs var _trueSizeHeight:Number;
+	///viewTreeNs var _trueSizeDepth:Number;
+
+	viewTreeNs var virtualWidthSizingType:int = 0;
+	viewTreeNs var virtualHeightSizingType:int = 0;
+	viewTreeNs var _virtualSizeWidth:Number;
+	viewTreeNs var _virtualSizeHeight:Number;
+	///viewTreeNs var _virtualSizeDepth:Number;
 
 	viewTreeNs var ignoreOrder:Boolean;
 
@@ -323,43 +329,100 @@ public class BaseDefinition {
 		var strLength:int;
 		var lastChar:String;
 
-		widthSizingType = ViewConstants.STATIC;
+		trueWidthSizingType = ViewConstants.STATIC;
 		if (width is Number) {
-			_sizeWidth = Number(width);
+			_trueSizeWidth = Number(width);
 		} else if (width is String) {
 			strLength = width.length;
 			if (strLength > 0) {
 				lastChar = width.charAt(strLength - 1);
 				if (lastChar == "%") {
-					widthSizingType = ViewConstants.PERCENTAGE;
-					_sizeWidth = Number(width.substr(0, strLength - 1))
+					trueWidthSizingType = ViewConstants.PERCENTAGE;
+					_trueSizeWidth = Number(width.substr(0, strLength - 1))
 				} else {
-					_sizeWidth = Number(width);
+					_trueSizeWidth = Number(width);
 				}
 			} else {
-				_sizeWidth = view.width;
+				_trueSizeWidth = view.width;
 			}
 		} else {
-			heightSizingType = ViewConstants.NONE;
+			trueWidthSizingType = ViewConstants.NONE;
 		}
-		heightSizingType = ViewConstants.STATIC;
+		trueHeightSizingType = ViewConstants.STATIC;
 		if (height is Number) {
-			_sizeHeight = Number(height);
+			_trueSizeHeight = Number(height);
 		} else if (height is String) {
 			strLength = height.length;
 			if (strLength > 0) {
 				lastChar = height.charAt(strLength - 1);
 				if (lastChar == "%") {
-					heightSizingType = ViewConstants.PERCENTAGE;
-					_sizeHeight = Number(height.substr(0, strLength - 1));
+					trueHeightSizingType = ViewConstants.PERCENTAGE;
+					_trueSizeHeight = Number(height.substr(0, strLength - 1));
 				} else {
-					_sizeHeight = Number(height);
+					_trueSizeHeight = Number(height);
 				}
 			} else {
-				_sizeHeight = view.height;
+				_trueSizeHeight = view.height;
 			}
 		} else {
-			heightSizingType = ViewConstants.NONE;
+			trueHeightSizingType = ViewConstants.NONE;
+		}
+
+		//sizeDepth = depth;
+		return this;
+	}
+
+	/**
+	 * Change size of the view for aligments, does not change actual size. Supported formats:                                                                                <br>
+	 * STATIC, fixed size: positionAt(100, 200);  sizeAs("100", "200");                                                            <br>
+	 * PERCENTAGE, percentage of parents size : sizeAs("30%", "50%");                                                            <br>
+	 *
+	 * @param width
+	 * @param height
+	 * @param depth
+	 * @return
+	 */
+	public function sizeAs(width:Object, height:Object, depth:Object = 0):BaseDefinition {
+		var strLength:int;
+		var lastChar:String;
+
+		virtualWidthSizingType = ViewConstants.STATIC;
+		if (width is Number) {
+			_virtualSizeWidth = Number(width);
+		} else if (width is String) {
+			strLength = width.length;
+			if (strLength > 0) {
+				lastChar = width.charAt(strLength - 1);
+				if (lastChar == "%") {
+					virtualWidthSizingType = ViewConstants.PERCENTAGE;
+					_virtualSizeWidth = Number(width.substr(0, strLength - 1))
+				} else {
+					_virtualSizeWidth = Number(width);
+				}
+			} else {
+				_virtualSizeWidth = view.width;
+			}
+		} else {
+			virtualWidthSizingType = ViewConstants.NONE;
+		}
+		virtualHeightSizingType = ViewConstants.STATIC;
+		if (height is Number) {
+			_virtualSizeHeight = Number(height);
+		} else if (height is String) {
+			strLength = height.length;
+			if (strLength > 0) {
+				lastChar = height.charAt(strLength - 1);
+				if (lastChar == "%") {
+					virtualHeightSizingType = ViewConstants.PERCENTAGE;
+					_virtualSizeHeight = Number(height.substr(0, strLength - 1));
+				} else {
+					_virtualSizeHeight = Number(height);
+				}
+			} else {
+				_virtualSizeHeight = view.height;
+			}
+		} else {
+			virtualHeightSizingType = ViewConstants.NONE;
 		}
 
 		//sizeDepth = depth;
@@ -371,21 +434,49 @@ public class BaseDefinition {
 	// Internal
 	//-------------------------------
 
+	viewTreeNs function get trueSizeWidth():Number {
+		if (trueWidthSizingType == ViewConstants.STATIC) {
+			return _trueSizeWidth;
+		} else if (trueWidthSizingType == ViewConstants.PERCENTAGE && view.parent) {
+			return parent.trueSizeWidth * (_trueSizeWidth / 100);
+		} else {
+			return view.width;
+		}
+	}
+
+	viewTreeNs function get trueSizeHeight():Number {
+		if (trueHeightSizingType == ViewConstants.STATIC) {
+			return _trueSizeHeight;
+		} else if (trueHeightSizingType == ViewConstants.PERCENTAGE && view.parent) {
+			return parent.trueSizeHeight * (_trueSizeHeight / 100);
+		} else {
+			return view.height;
+		}
+	}
+
 	viewTreeNs function get sizeWidth():Number {
-		if (widthSizingType == ViewConstants.STATIC) {
-			return _sizeWidth;
-		} else if (widthSizingType == ViewConstants.PERCENTAGE && view.parent) {
-			return parent.sizeWidth * (_sizeWidth / 100);
+		if (virtualWidthSizingType == ViewConstants.STATIC) {
+			return _virtualSizeWidth;
+		} else if (virtualWidthSizingType == ViewConstants.PERCENTAGE && view.parent) {
+			return parent.sizeWidth * (_virtualSizeWidth / 100);
+		} else if (trueWidthSizingType == ViewConstants.STATIC) {
+			return _trueSizeWidth;
+		} else if (trueWidthSizingType == ViewConstants.PERCENTAGE && view.parent) {
+			return parent.trueSizeWidth * (_trueSizeWidth / 100);
 		} else {
 			return view.width;
 		}
 	}
 
 	viewTreeNs function get sizeHeight():Number {
-		if (heightSizingType == ViewConstants.STATIC) {
-			return _sizeHeight;
-		} else if (heightSizingType == ViewConstants.PERCENTAGE && view.parent) {
-			return parent.sizeHeight * (_sizeHeight / 100);
+		if (virtualHeightSizingType == ViewConstants.STATIC) {
+			return _virtualSizeHeight;
+		} else if (virtualHeightSizingType == ViewConstants.PERCENTAGE && view.parent) {
+			return parent.sizeHeight * (_virtualSizeHeight / 100);
+		} else if (trueHeightSizingType == ViewConstants.STATIC) {
+			return _trueSizeHeight;
+		} else if (trueHeightSizingType == ViewConstants.PERCENTAGE && view.parent) {
+			return parent.trueSizeHeight * (_trueSizeHeight / 100);
 		} else {
 			return view.height;
 		}

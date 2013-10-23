@@ -26,9 +26,15 @@ public class F4TestCommand extends Command {
 		var rootDefinition:ViewDefinition = ViewTreeManager.getRootDefinition(main);
 
 		rootDefinition.pushViews(
-				new StaticViewDefinition(TextField, null, {text:"Stack group. Order is ignored.\nItems will be ordered in order they are added..",
-					autoSize:TextFieldAutoSize.RIGHT,
-					mouseEnabled:false})
+				new StaticViewDefinition(
+						TextField
+						, null
+						, {
+							text:"Stack group. Order is ignored.\nItems will be ordered in order they are added..",
+							autoSize:TextFieldAutoSize.RIGHT,
+							mouseEnabled:false
+						}
+				)
 						.positionTo("50^", "^40")
 						.autoAdd()
 				, new ViewDefinition(MenuView, MenuViewMediator)

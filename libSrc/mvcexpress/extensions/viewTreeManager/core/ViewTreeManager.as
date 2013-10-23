@@ -46,7 +46,7 @@ public class ViewTreeManager {
 			rootMediatorClass = Mediator;
 		}
 		CONFIG::debug {
-			if (!checkClassSuperclass(rootMediatorClass, "mvcexpress.mvc::Mediator")) {
+			if (!checkClassSuperclass(rootMediatorClass, "mvcexpress.mvc::Mediator", true)) {
 				throw Error("rootMediatorClass:" + rootMediatorClass + " you are trying to use is not extended from 'mvcexpress.mvc::Mediator' class.");
 			}
 		}

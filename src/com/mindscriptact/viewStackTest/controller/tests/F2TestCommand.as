@@ -11,9 +11,7 @@ import flash.text.TextFieldAutoSize;
 
 import mvcexpress.extensions.viewTreeManager.core.ViewTreeManager;
 import mvcexpress.extensions.viewTreeManager.data.StaticViewDefinition;
-
 import mvcexpress.extensions.viewTreeManager.data.ViewDefinition;
-
 import mvcexpress.mvc.Command;
 
 /**
@@ -26,9 +24,15 @@ public class F2TestCommand extends Command {
 		var rootDefinition:ViewDefinition = ViewTreeManager.getRootDefinition(main);
 
 		rootDefinition.pushViews(
-				new StaticViewDefinition(TextField, null, {text:"All views is toggleable, and ordered.",
-					autoSize:TextFieldAutoSize.RIGHT,
-					mouseEnabled:false})
+				new StaticViewDefinition(
+						TextField
+						, null
+						, {
+							text:"All views is toggleable, and ordered.",
+							autoSize:TextFieldAutoSize.RIGHT,
+							mouseEnabled:false
+						}
+				)
 						.positionTo("50^", "^40")
 						.autoAdd()
 				, new ViewDefinition(MenuView, MenuViewMediator)

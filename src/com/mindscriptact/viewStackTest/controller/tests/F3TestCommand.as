@@ -26,9 +26,15 @@ public class F3TestCommand extends Command {
 		var rootDefinition:ViewDefinition = ViewTreeManager.getRootDefinition(main);
 
 		rootDefinition.pushViews( //
-				new StaticViewDefinition(TextField, null, {text:"Combo group. only one view will be visible.\nAny other will be removed.",
-					autoSize:TextFieldAutoSize.RIGHT,
-					mouseEnabled:false})
+				new StaticViewDefinition(
+						TextField
+						, null
+						, {
+							text:"Combo group. only one view will be visible.\nAny other will be removed.",
+							autoSize:TextFieldAutoSize.RIGHT,
+							mouseEnabled:false
+						}
+				)
 						.positionTo("50^", "^40")
 						.autoAdd()
 				, new ViewDefinition(MenuView, MenuViewMediator)

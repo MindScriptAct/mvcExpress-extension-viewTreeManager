@@ -23,17 +23,19 @@ public class F1TestCommand extends Command {
 	public function execute(main:Main):void {
 
 
-
-
-
-
 		var rootDefinition:ViewDefinition = ViewTreeManager.getRootDefinition(main);
 
 
 		rootDefinition.pushViews(
-				new StaticViewDefinition(TextField, null, {text:"general testing..",
-					autoSize:TextFieldAutoSize.RIGHT,
-					mouseEnabled:false})
+				new StaticViewDefinition(
+						TextField
+						, null
+						, {
+							text:"general testing..",
+							autoSize:TextFieldAutoSize.RIGHT,
+							mouseEnabled:false
+						}
+				)
 						.positionTo("50^", "^40")
 						.autoAdd()
 				, new ViewDefinition(MenuView, MenuViewMediator)

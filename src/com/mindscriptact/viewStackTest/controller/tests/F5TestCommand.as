@@ -26,9 +26,15 @@ public class F5TestCommand extends Command {
 		var rootDefinition:ViewDefinition = ViewTreeManager.getRootDefinition(main);
 
 		rootDefinition.pushViews(
-				new StaticViewDefinition(TextField, null, {text:"Grouped views.\nCan be added/removed all at onece. ordered.",
-					autoSize:TextFieldAutoSize.RIGHT,
-					mouseEnabled:false})
+				new StaticViewDefinition(
+						TextField
+						, null
+						, {
+							text:"Grouped views.\nCan be added/removed all at onece. ordered.",
+							autoSize:TextFieldAutoSize.RIGHT,
+							mouseEnabled:false
+						}
+				)
 						.positionTo("50^", "^40")
 						.autoAdd()
 				, new ViewDefinition(MenuView, MenuViewMediator)
