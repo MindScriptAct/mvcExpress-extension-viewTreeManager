@@ -3,8 +3,8 @@
   <component name="FlexBuildConfigurationManager" active="viewStackTest">
     <configurations>
       <configuration name="viewStackTest" main-class="com.mindscriptact.viewStackTest.Main" output-file="Main.swf" output-folder="$MODULE_DIR$/bin">
-        <dependencies target-player="11.8">
-          <sdk name="flex_sdk_4.10.0" />
+        <dependencies target-player="11.9">
+          <sdk name="flex_sdk_4.11.0_air_3.9" />
         </dependencies>
         <compiler-options>
           <option name="additionalOptions" value="-define=CONFIG::debug,true -default-size 1000 500" />
@@ -22,7 +22,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/libSrc" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="flex_sdk_4.10.0" jdkType="Flex SDK Type (new)" />
+    <orderEntry type="jdk" jdkName="flex_sdk_4.11.0_air_3.9" jdkType="Flex SDK Type (new)" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

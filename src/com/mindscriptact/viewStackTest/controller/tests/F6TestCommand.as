@@ -31,7 +31,7 @@ public class F6TestCommand extends Command {
 						TextField
 						, null
 						, {
-							text:"Sizing test.\n 1 - sized and resized *2\n 2 - sized as *2, but view not resized\n 3 - view resized as *2, but calculated with original size",
+							text:"Sizing test.\n 1 - sized as and resized to *2\n 2 - sized as *2, but view not resized\n 3 - view resized to *2, but calculated with original size",
 							autoSize:TextFieldAutoSize.RIGHT,
 							mouseEnabled:false
 						}

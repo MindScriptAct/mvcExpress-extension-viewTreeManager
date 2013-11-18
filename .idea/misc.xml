@@ -3,7 +3,7 @@
   <component name="CopyrightManager" default="">
     <module2copyright />
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="flex_sdk_4.10.0" project-jdk-type="Flex SDK Type (new)">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="flex_sdk_4.11.0_air_3.9" project-jdk-type="Flex SDK Type (new)">
     <output url="file://$PROJECT_DIR$/bin" />
   </component>
 </project>

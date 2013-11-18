@@ -61,27 +61,14 @@ public class ViewNode {
 			childDefinitions[rootDefinition] = view;
 			childViews[view] = rootDefinition;
 
-			moduleMediatorMap.map(view.constructor, viewMediatorClass);
 			rootDefinition.isMapped = true;
 			rootDefinition.parent = null; // root parent.
-			moduleMediatorMap.mediate(view);
+			moduleMediatorMap.mediateWith(view, viewMediatorClass);
 		} else {
 			throw Error("Root is already defined with " + rootDefinition.view);
 		}
 		return rootDefinition;
 	}
-
-	viewTreeNs function disposeDefinition(viewDefinition:BaseDefinition):void {
-		use namespace viewTreeNs;
-
-		if (viewDefinition is ViewDefinition) {
-			if (moduleMediatorMap.isMapped(viewDefinition.viewClass, (viewDefinition as ViewDefinition).mediatorClass)) {
-				moduleMediatorMap.unmap(viewDefinition.viewClass, (viewDefinition as ViewDefinition).mediatorClass);
-			}
-		}
-		viewDefinition.dispose();
-	}
-
 
 	//----------------------------------
 	//		views
@@ -166,15 +153,15 @@ public class ViewNode {
 					viewDefinition.view = view;
 
 					// sizing
-					if (viewDefinition.widthSizingType == ViewConstants.STATIC) {
-						view.width = viewDefinition.sizeWidth;
-					} else if (viewDefinition.widthSizingType == ViewConstants.PERCENTAGE) {
-						view.width = viewDefinition.parent.sizeWidth * (viewDefinition._sizeWidth / 100);
+					if (viewDefinition.trueWidthSizingType == ViewConstants.STATIC) {
+						view.width = viewDefinition._trueSizeWidth;
+					} else if (viewDefinition.trueWidthSizingType == ViewConstants.PERCENTAGE) {
+						view.width = viewDefinition.parent.sizeWidth * (viewDefinition._trueSizeWidth / 100);
 					}
-					if (viewDefinition.widthSizingType == ViewConstants.STATIC) {
-						view.height = viewDefinition.sizeHeight;
-					} else if (viewDefinition.widthSizingType == ViewConstants.PERCENTAGE) {
-						view.height = viewDefinition.parent.sizeHeight * (viewDefinition._sizeHeight / 100);
+					if (viewDefinition.trueWidthSizingType == ViewConstants.STATIC) {
+						view.height = viewDefinition._trueSizeHeight;
+					} else if (viewDefinition.trueWidthSizingType == ViewConstants.PERCENTAGE) {
+						view.height = viewDefinition.parent.sizeHeight * (viewDefinition._trueSizeHeight / 100);
 					}
 
 					/// positioning
@@ -368,6 +355,8 @@ public class ViewNode {
 
 	viewTreeNs function triggerMessage(messageType:String):void {
 		use namespace viewTreeNs;
+
+		///debug:viewTree**/trace("ViewNode.triggerMessage() ", messageType);
 
 		var viewDefinitions:Vector.<ViewDefinition>;
 		var viewDefinitionCount:int;

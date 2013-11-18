@@ -47,8 +47,9 @@ public class Mediator {
 	 * @private */
 	pureLegsCore var messenger:Messenger;
 
-	// Shows if proxy is ready. Read only.
-	private var _isReady:Boolean; // = false;
+	/** Shows if proxy is ready. Read only.
+	 * @private */
+	pureLegsCore var isReady:Boolean; // = false;
 
 	/** amount of pending injections.
 	 * @private */
@@ -71,7 +72,8 @@ public class Mediator {
 	CONFIG::debug
 	static pureLegsCore var canConstruct:Boolean; // = false;
 
-	/** CONSTRUCTOR */
+	/** CONSTRUCTOR
+	 * @private */
 	public function Mediator() {
 		CONFIG::debug {
 			use namespace pureLegsCore;
@@ -100,15 +102,6 @@ public class Mediator {
 	protected function onRemove():void {
 		// for override
 	}
-
-	/**
-	 * Indicates if mediator is ready for usage. (all dependencies are injected.)                                                                <br/>
-	 * Mediator will not be ready if it has pending, not resolved dependencies. (Pending injection feature must be turned on for that.)
-	 */
-	protected function get isReady():Boolean {
-		return _isReady;
-	}
-
 
 	//----------------------------------
 	//     MESSAGING
@@ -168,11 +161,31 @@ public class Mediator {
 	 * @param    type    message type that was set for handle function to react to.
 	 * @param    handler    function that was set to react to message.
 	 */
+
+	/**
+	 * Checks if mediator has handler for message type.
+	 * @param type        message type for handle function to react to.
+	 * @param handler    handler function.
+	 * @return  true if mediator has a handler.
+	 */
+	protected function hasHandler(type:String, handler:Function):Boolean {
+		use namespace pureLegsCore;
+
+		return messenger.hasHandler(type, handler);
+	}
+
+	/**
+	 * Removes handle function from message of given type.
+	 * Then Mediator is removed(unmediated) all message handlers are automatically removed by framework.
+	 * @param    type    message type that was set for handle function to react to.
+	 * @param    handler    function that was set to react to message.
+	 */
 	protected function removeHandler(type:String, handler:Function):void {
 		use namespace pureLegsCore;
 
 		messenger.removeHandler(type, handler);
 	}
+
 
 	/**
 	 * Remove all handle functions created by this mediator, internal module handlers AND scoped handlers.
@@ -289,7 +302,7 @@ public class Mediator {
 	 * Executed automatically BEFORE mediator is created. (with proxyMap.mediate(...))
 	 * @private */
 	pureLegsCore function register():void {
-		_isReady = true;
+		isReady = true;
 		onRegister();
 	}
 
@@ -319,9 +332,11 @@ public class Mediator {
 	//    Extension checking: INTERNAL, DEBUG ONLY.
 	//----------------------------------
 
+	/** @private */
 	CONFIG::debug
 	static pureLegsCore var extension_id:int = ModuleCore.EXTENSION_CORE_ID;
 
+	/** @private */
 	CONFIG::debug
 	static pureLegsCore var extension_name:String = ModuleCore.EXTENSION_CORE_NAME;
 

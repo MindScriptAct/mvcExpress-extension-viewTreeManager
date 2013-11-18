@@ -22,9 +22,7 @@ public class F1TestCommand extends Command {
 
 	public function execute(main:Main):void {
 
-
 		var rootDefinition:ViewDefinition = ViewTreeManager.getRootDefinition(main);
-
 
 		rootDefinition.pushViews(
 				new StaticViewDefinition(

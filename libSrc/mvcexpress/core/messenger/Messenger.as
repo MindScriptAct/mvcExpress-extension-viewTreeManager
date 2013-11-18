@@ -21,10 +21,12 @@ use namespace pureLegsCore;
  */
 public class Messenger {
 
-	// name of the module messenger is working for.
+	/** name of the module messenger is working for.
+	 * @private */
 	pureLegsCore var moduleName:String;
 
-	// defines if messenger can be instantiated.
+	/** defines if messenger can be instantiated.
+	 * @private */
 	static pureLegsCore var allowInstantiation:Boolean; // = false;
 
 	// keeps ALL HandlerVO's in vectors by message type that they have to respond to.
@@ -87,6 +89,18 @@ public class Messenger {
 		}
 		return msgData;
 	}
+
+	/**
+	 * Checks if messanger has handler for this message type.
+	 * @param    type                message type that handler had to react
+	 * @param    handler                function called on sent message.
+	 * @return    true if messenger has specific handler for message type.
+	 */
+	public function hasHandler(type:String, handler:Function):Boolean {
+		//return (handlerRegistry[type] && handlerRegistry[type][handler]);
+		return false;
+	}
+
 
 	/**
 	 * Removes handler function that will be called then message of specified type is sent.
@@ -215,7 +229,7 @@ public class Messenger {
 			for (var i:int = 0; i < msgCount; i++) {
 				var handlerVo:HandlerVO = msgList[i];
 				if (handlerVo.isExecutable) {
-					messageHandlers += "[EXECUTES:" + commandMap.listMessageCommands(key) + "], ";
+					messageHandlers += "[EXECUTES:" + commandMap.getMessageCommand(key) + "], ";
 					CONFIG::debug {
 						messageHandlers += "[" + handlerVo.handlerClassName + "], ";
 					}
@@ -240,9 +254,11 @@ public class Messenger {
 	//    Extension checking: INTERNAL, DEBUG ONLY.
 	//----------------------------------
 
+	/** @private */
 	CONFIG::debug
 	pureLegsCore var SUPPORTED_EXTENSIONS:Dictionary;
 
+	/** @private */
 	CONFIG::debug
 	pureLegsCore function setSupportedExtensions(supportedExtensions:Dictionary):void {
 		pureLegsCore::SUPPORTED_EXTENSIONS = supportedExtensions;

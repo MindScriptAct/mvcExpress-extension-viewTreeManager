@@ -434,26 +434,6 @@ public class BaseDefinition {
 	// Internal
 	//-------------------------------
 
-	viewTreeNs function get trueSizeWidth():Number {
-		if (trueWidthSizingType == ViewConstants.STATIC) {
-			return _trueSizeWidth;
-		} else if (trueWidthSizingType == ViewConstants.PERCENTAGE && view.parent) {
-			return parent.trueSizeWidth * (_trueSizeWidth / 100);
-		} else {
-			return view.width;
-		}
-	}
-
-	viewTreeNs function get trueSizeHeight():Number {
-		if (trueHeightSizingType == ViewConstants.STATIC) {
-			return _trueSizeHeight;
-		} else if (trueHeightSizingType == ViewConstants.PERCENTAGE && view.parent) {
-			return parent.trueSizeHeight * (_trueSizeHeight / 100);
-		} else {
-			return view.height;
-		}
-	}
-
 	viewTreeNs function get sizeWidth():Number {
 		if (virtualWidthSizingType == ViewConstants.STATIC) {
 			return _virtualSizeWidth;
@@ -462,7 +442,7 @@ public class BaseDefinition {
 		} else if (trueWidthSizingType == ViewConstants.STATIC) {
 			return _trueSizeWidth;
 		} else if (trueWidthSizingType == ViewConstants.PERCENTAGE && view.parent) {
-			return parent.trueSizeWidth * (_trueSizeWidth / 100);
+			return parent._trueSizeWidth * (_trueSizeWidth / 100);
 		} else {
 			return view.width;
 		}
@@ -476,7 +456,7 @@ public class BaseDefinition {
 		} else if (trueHeightSizingType == ViewConstants.STATIC) {
 			return _trueSizeHeight;
 		} else if (trueHeightSizingType == ViewConstants.PERCENTAGE && view.parent) {
-			return parent.trueSizeHeight * (_trueSizeHeight / 100);
+			return parent._trueSizeHeight * (_trueSizeHeight / 100);
 		} else {
 			return view.height;
 		}
@@ -494,7 +474,7 @@ public class BaseDefinition {
 			}
 			var oldDefinition:BaseDefinition = nextDefinition;
 			nextDefinition = nextDefinition.nextSibling;
-			viewNode.disposeDefinition(oldDefinition);
+			oldDefinition.dispose()
 		}
 	}
 
