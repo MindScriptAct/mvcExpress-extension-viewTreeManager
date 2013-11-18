@@ -35,9 +35,15 @@ Current work-flow:
  - addOn("addMessage"), creates, mediates and adds view to parent view then this message is sent. (can have more then one message)
  - removeOn("removeMessage"), unmediates and removes view from parent view then this message is sent. (can have more then one message)
  - toggleOn("removeMessage"), this messages will add view if it's not added, and remove if it is. (can have more then one message)
- - autoAdd(), automatically adds this view then parent view as added.
- - positionTo(200, 200), will set x and y of object after creation.
- - sizeTo(100, 200), will set width and height of object after creation.
+ - autoAdd(), automatically adds this view then parent view is added.
+ - positionTo(200, 200), will set x and y of view object after creation, supports:
+   -  100 and "100", static positios. 
+   -  "50%" (percentage of parents size)
+   -  "50|" and "|50", pixels from parent center point.
+   -  "20^" and "^20", pixels from parent left or right border.
+ - sizeTo(100, 200), will set width and height of view object after creation, supports:
+   -  100 and "100", static size. 
+   -  "50%" (percentage of parents size)
  - sizeAs(100, 200), will NOT set width and height of object, instead it will use these for fluid interface calculations.
  
  - injectIntoParentAs("variableName"), will inject view to parent view as this variable. (variable must be public.)
